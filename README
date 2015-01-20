@@ -1,0 +1,10 @@
+# CovarianceTool
+The Covariance Tool aims at varying the unknown branching ratios in the cosmogenic decay trees to gauge the effects on the detected spectrum obtained with these ratios. It allows to estimate a covariance matrix for the cosmogenic detected spectrum.
+
+The decay trees of 9Li and 8He are implemented and intend to read a database of ROOT files where each unknown branching ratio needs its own input spectrum to vary. The tool is meant to be used after the HEP outputs of the Spectrum Generator have been run through the detector's simulation.
+
+ The covariance matrix is computed iteratively. The program stops when the current covariance matrix and the ones in the deque of former matrices are close enough (using the Hilbert-Schmidt norm with a epsilon value that defaults to 1e-5) .The  computations are based on the Eigen library. The covariance matrix, the correlation matrix, and the mean spectrum are saved as ROOT files for "easy" sharing.
+
+Weak magnetism is also implemented as (0.01 MeV-1)*binContent*binCenter.
+
+
