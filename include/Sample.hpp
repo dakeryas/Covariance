@@ -12,7 +12,7 @@
 using namespace::std;
 using namespace::Eigen;
 
-class Sample { 
+class Sample{
 
 protected:
   unsigned n;//number of iterations for the process (when with a sample, n =1)
@@ -21,7 +21,7 @@ protected:
   MatrixXd product; //after nth iterations, the mean value of the product x(i) x(j) where x(i) is the ith component of the random vector variable 
   MatrixXd var; //the variance matrix
   
-  void ReadFromStd(const vector< double >& xstd);
+  void ReadFromStd(const vector<double>& xstd);
   void ReadFromHist(const TH1D &h);
   void UpdateMean();//update the mean from the current x values
   void UpdateProd();//add x times the transpose of x to the current value of prod
@@ -35,7 +35,7 @@ public:
   Sample(vector<double>& xstd);
   Sample(const TH1D& h);
   Sample& operator +=(const Sample& add);
-  void Update(const vector< double >& xstdnth);//add another sample, increase n, and update the mean, mean_product, and var
+  void Update(const vector<double>& xstdnth);//add another sample, increase n, and update the mean, mean_product, and var
   void Update(const VectorXd& xnth);//add another sample, increase n, and update the mean, mean_product, and var
   void Update(const TH1D& h);//add another sample from the values of the vector of bin contents, increase n, and update the mean, mean_product, and var
   unsigned GetIteration() const;//returns n

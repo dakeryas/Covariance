@@ -256,7 +256,7 @@ void Sample::SaveToRoot(const char* outname, const TH1D& h){
   TMatrixD var_root(var.rows(), var.cols(), var.data());
   var_root.Write("Var");
   MatrixXd corr = GetCorrMatrix();
-  TMatrixD corr_root(corr.rows(), corr.cols(), corr.data());
+  TMatrixD corr_root(corr.rows(), corr.cols(), corr.data());//Eigen is Column Major and ROOT is Row Major but the matrices are symmetric...
   corr_root.Write("Corr");
  
   const double min = h.GetBinLowEdge(1);
@@ -272,7 +272,7 @@ void Sample::SaveToRoot(const char* outname, const vector<double> edges, const v
   TMatrixD var_root(var.rows(), var.cols(), var.data());
   var_root.Write("Var");
   MatrixXd corr = GetCorrMatrix();
-  TMatrixD corr_root(corr.rows(), corr.cols(), corr.data());
+  TMatrixD corr_root(corr.rows(), corr.cols(), corr.data());//Eigen is Column Major and ROOT is Row Major but the matrices are symmetric...
   corr_root.Write("Corr");
   GetMeanSpectrum(Bin(edges, width)).Write();
   

@@ -40,7 +40,6 @@ class spectrum{ //class to spectrum paths(or more precisely the filename in the 
   void PickRatiosFromError();//uses re to pick guassian ratios for r
   void UpdateResSpectrum();//uses indiv_spectra to compute res_spectrum with r
   
-  
 public:
   spectrum(); //constructor, creates empty vectors
   spectrum(const vector<TH1D>& indiv_spectra, const vector<double> rc = vector<double> (0), const bool err = 0, const vector<double> re = vector<double> (0));//you don't need rmin and rmax in this case

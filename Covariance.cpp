@@ -6,8 +6,8 @@ void CovarianceLi(const path& database, const char* outname, const double epsilo
   
   const vector<double> rbLi = {0.297, 0.158, 0.015, 0.011, 0.027};
   const vector<double> rbLi_e = {0.03, 0.03 , 0.005, 0.003, 0.002};
-  const vector<double> r_1181 = {0.12, 0.11, 0.02, 0.28, 0.47, 0.01};
-  const vector<double> r_1181_e = {0.08, 0.06, 0.01, 0.06, 0.07, 0.01};
+  const vector<double> r_1181 = {0.47, 0.28, 0.12, 0.11, 0.02, 0.01};
+  const vector<double> r_1181_e = {0.07, 0.06, 0.08, 0.06, 0.01, 0.01};//need to match the ordering of std::sort on boost::path
   
   const vector<double> rebin_edges = {0, 14};
   const vector<double> rebin_widths = {0.1};
@@ -16,7 +16,8 @@ void CovarianceLi(const path& database, const char* outname, const double epsilo
   spectrum spe_278(database, "_278_");
   spectrum spe_794(database, "_794_");
   spectrum spe_1128(database, "_1128_");
-  spectrum spe_1181(database, "_1181_", r_1181, true, r_1181_e);//the errors will be set to zero by default
+  spectrum spe_1181(database, "_1181_");
+//   spectrum spe_1181(database, "_1181_", r_1181, true, r_1181_e);//the errors will be set to zero by default
   
   const vector<spectrum*> branches ({&spe_243, &spe_278, &spe_794, &spe_1128, &spe_1181});
   spectrum spe_tot(branches, rbLi, true, rbLi_e);

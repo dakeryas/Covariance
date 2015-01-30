@@ -3,7 +3,7 @@
 
 #include "Sample.hpp"
 
-class SampleSlope: public Sample {
+class SampleSlope: public Sample{
   
   double slope;
   VectorXd binErrors;

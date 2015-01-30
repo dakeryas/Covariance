@@ -4,7 +4,7 @@
 #include <deque>
 #include "Sample.hpp"
 
-class ConvergenceTester { 
+class ConvergenceTester{ 
   
   deque<MatrixXd> oldVar; //deque to store several covariance matrices to test the Cauchy convergence
   double epsilon;//required relative precision

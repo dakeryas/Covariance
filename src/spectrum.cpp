@@ -128,6 +128,7 @@ void spectrum::FillSpectra(const path& database_path, const string& sorter){
   vector<path> found_paths;
   PathGrabber(database_path, sorter, found_paths);
   if(found_paths.empty()) cout<<"No files matching '"<<sorter<<"' were found in "<<database_path<<"."<<endl;
+  sort(found_paths.begin(), found_paths.end());//this especially important to have a common ordering for the branching ratios
   StoreFromPaths(found_paths);
   
 }
