@@ -16,8 +16,7 @@ void CovarianceLi(const path& database, const char* outname, const double epsilo
   spectrum spe_278(database, "_278_");
   spectrum spe_794(database, "_794_");
   spectrum spe_1128(database, "_1128_");
-  spectrum spe_1181(database, "_1181_");
-//   spectrum spe_1181(database, "_1181_", r_1181, true, r_1181_e);//the errors will be set to zero by default
+  spectrum spe_1181(database, "_1181_", r_1181, true, r_1181_e);//the errors will be set to zero by default
   
   const vector<spectrum*> branches ({&spe_243, &spe_278, &spe_794, &spe_1128, &spe_1181});
   spectrum spe_tot(branches, rbLi, true, rbLi_e);
