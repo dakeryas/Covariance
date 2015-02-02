@@ -100,12 +100,12 @@ void spectrum::StoreFromPaths(const vector<path>& database_path){ //store all TH
   TKey *current_key; //to point to the 'items' in a root file
   TDirectory* CurrentDir = gDirectory->GetDirectory("");//shameful trick 
   
-  for(unsigned k = 0; k<database_path.size(); ++k){
+  for(const path& p : database_path){
   
-    TFile file(database_path[k].string().c_str());
+    TFile file(p.string().c_str());
     CurrentDir->cd(); //shameful trick, second part
     
-    TIter keyit(file.GetListOfKeys()); //iterator over the contents of database_path[k]
+    TIter keyit(file.GetListOfKeys()); //iterator over the contents of p
     while((current_key =(TKey*)keyit())){ //returns the pointer and increment it, when the pointer is not allocated it returns zero so the loop ends
             
       StoreFromTH1(current_key);//reads a key to retrieve a TH1 and store it in h
@@ -160,10 +160,10 @@ void spectrum::UpdateFromSpectra(const vector<spectrum*>& new_indiv_spectra){
   
 }
 
-double spectrum::GetRatioSum(){//sums the ratios and returns its value
+double spectrum::GetRatioSum() const{//sums the ratios and returns its value
   
   double s = 0;
-  for(unsigned k = 0; k<r.size(); ++k) s+= r[k];
+  for(const double& ratio : r) s += ratio; 
   return s;
   
 }
@@ -197,7 +197,7 @@ void spectrum::FillErrors(const vector<double>& rc, const vector<double>& rec){
 
 void spectrum::DivideRatios(double s){
   
-  for(unsigned k = 0; k<r.size(); ++k) r[k] = r[k]/s;
+  for(double& ratio : r) ratio = ratio/s;
   
 }
 
@@ -272,7 +272,7 @@ void spectrum::ConstrainRatios(const vector<double>& rminc, const vector<double>
   
 }
 
-const TH1D& spectrum::GetResultingSpectrum(){
+const TH1D& spectrum::GetResultingSpectrum() const{
 
   return res_spectrum;
   

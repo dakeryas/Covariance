@@ -31,7 +31,7 @@ class spectrum{ //class to spectrum paths(or more precisely the filename in the 
   void StoreFromCan(TKey* key);//stores all histograms in a canvas into indiv_spectra
   void StoreFromTH1(TKey* key);//copies a histogram from a key into indiv_spectra
   void StoreFromPaths(const vector<path>& database_path);//store from files using the right methods if they contains cans or histograms
-  double GetRatioSum();//sums the ratios and returns its value
+  double GetRatioSum() const;//sums the ratios and returns its value
   void NormaliseSpectra();//normalise all the indiv_spectra to one
   void FillRatios(const vector<double>& rc);// r = rc if rc is not empty
   void FillErrors(const vector<double>& rc, const vector<double>& rec);//re = rec if rec is not empty and it the size doesn't fit, complete it with zeros, we need rc to fill relative errors re[k]/rc[k]
@@ -52,7 +52,7 @@ public:
   void UpdateFromSpectra(const vector<spectrum*>& new_indiv_spectra);
   void NewEvent();//updates the ratios according to the value of err (either random within rmin and rmax or gaussian with re) and updates the res_spectrum
   void ConstrainRatios(const vector< double >& rminc, const vector< double >& rmaxc);
-  const TH1D& GetResultingSpectrum();
+  const TH1D& GetResultingSpectrum() const;
   
 };
 
