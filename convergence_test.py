@@ -38,7 +38,6 @@ class covThread (threading.Thread):#override the constructor to save the program
     self.outpattern = outpattern
     self.outextension = outextension
     
-
   def run(self):
     tprint(" ".join([self.program, self.target_path, self.outpattern+str(self.threadID)+self.outextension]))
     devnull = open(os.devnull, 'w')#to hide the output of the program
@@ -56,8 +55,8 @@ def Compare(program, target_path, outfile):
   proc.wait()
 
 def main():
-
-  Generate("./Covariance.exe","/home/vsibille/Documents/DCHOOZ/Cosmogenic/Simulations/Helium/Output", "test", ".root", 12)
+  
+  Generate("./Covariance","/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Helium_gaus/Gd/Output", "test", ".root", 12)
   Compare("CompareCans", ".", "comp.root")
   
 
