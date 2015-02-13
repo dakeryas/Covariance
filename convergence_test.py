@@ -50,14 +50,14 @@ def Generate(program, target_path, outpattern, outextension, iteration):
     pool = threadPool(1000*(k+1), program, target_path, outpattern, outextension)#create a batch thread of n threads
     pool.run()
   
-def Compare(program, target_path, outfile):
-  proc = subprocess.Popen([program, target_path, outfile])
+def Compare(program):
+  proc = subprocess.Popen(program)
   proc.wait()
 
 def main():
   
-  Generate("./Covariance","/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Helium_gaus/Gd/Output", "test", ".root", 12)
-  Compare("CompareCans", ".", "comp.root")
+  Generate("./Covariance","/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_gaus/Gd/Output", "test", ".root", 12)
+  Compare("CompareCans")
   
 
 if __name__ == "__main__":
