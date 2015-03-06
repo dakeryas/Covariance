@@ -12,7 +12,7 @@ class ConvergenceTester{
  
   
 public:
-  ConvergenceTester(double espilon = 1.e-3, unsigned dequeMaxSize = 2);//by default only use 2 levels 
+  ConvergenceTester(double espilon = 1.e-3, unsigned dequeMaxSize = 3);//by default only use 3 levels 
   void feed(const MatrixXd& Var);//add another var from a sample to the deque and pop the oldest element
   void feed(const Sample& sample);//get the variance matrix from the sample
   double getPrecision() const;//return epsilon

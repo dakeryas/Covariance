@@ -22,7 +22,7 @@ void CovarianceLi(const path& database, const char* outname, const double epsilo
   spectrum spe_tot(branches, rbLi, true, rbLi_e);
   
   Sample lithium(spe_tot.GetResultingSpectrum());
-  ConvergenceTester tester(epsilon);//create a convergence tester at two levels first
+  ConvergenceTester tester(epsilon);//create a convergence tester at three levels first
   
   while (!tester.converges()){
     
