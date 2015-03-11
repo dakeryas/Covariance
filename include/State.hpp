@@ -14,14 +14,15 @@ class State{ //node class using the Mersenne Twister generator for the ratios of
   std::vector<std::unique_ptr<Ratio>> ratios;
 
 public:
-  State(const T& spectrum, std::vector<State<T>> daughters, std::vector<Ratio*> ratios);
-  State(const T& spectrum, std::vector<State<T>> daughters);
-  State(const T& spectrum);
+  State(std::vector<State<T>> daughters, std::vector<Ratio*> ratios);//you may not have a fixed spectrum for such a state
+  State(std::vector<State<T>> daughters);//you may not have a fixed spectrum for such a state
+  State(const T& spectrum);//that is a leaf
   State(const State<T>& other);
   State(State<T>&& other) = default;
   State<T>& operator=(const State<T>& other);
   State<T>& operator=(State<T>&& other) = default;
   ~State() = default;
+  T getRealisation();//picks random ratios and returns the resulting spectrum or returns getSpectrum() if the ratios are empty
   const T& getSpectrum();//updates spectrum and returns it
   const std::vector<State<T>>& getDaughters();
   void setSpectrum(const T& spectrum);
@@ -40,19 +41,19 @@ std::ostream& operator<<(std::ostream& output, const State<T>& state){
 }
 
 template <class T>
-State<T>::State(const T& spectrum, std::vector<State<T>> daughters, std::vector<Ratio*> ratios):spectrum(spectrum),daughters(daughters),ratios(ratios){
+State<T>::State(std::vector<State<T>> daughters, std::vector<Ratio*> ratios):daughters(daughters),ratios(ratios){
   
 }
 
 template <class T>
-State<T>::State(const T& spectrum, std::vector<State<T>> daughters):State(spectrum, daughters, {}){
+State<T>::State(std::vector<State<T>> daughters):State(daughters, {}){
   
   for(auto it = daughters.begin(); it != daughters.end(); ++it) ratios.push_back(std::unique_ptr<Ratio>(new UniformRatio));
   
 }
   
 template <class T>
-State<T>::State(const T& spectrum):State(spectrum, {}){
+State<T>::State(const T& spectrum):spectrum(spectrum){
   
 }  
 
@@ -78,22 +79,31 @@ State<T>& State<T>::operator=(const State& other){
 }
 
 template <class T>
-const T& State<T>::getSpectrum(){
+T State<T>::getRealisation(){
   
   if(!daughters.empty() && !ratios.empty()){
     
-    Eigen::ArrayXd ratioValues(ratios.size());
+    T realisation;//use a temporary to allow for a 'std::move'
+    realisation.setZero();
     
+    Eigen::ArrayXd ratioValues(ratios.size());
     for(auto itPair = std::make_pair(ratioValues.data(), ratios.begin()); itPair.first != ratioValues.data()+ratios.size() && itPair.second != ratios.end(); ++itPair.first, ++itPair.second)
       *itPair.first = (*itPair.second)->getRealisation();
-    
     ratioValues = ratioValues/ratioValues.sum();
     
-    spectrum.setZero();
     for(auto itPair = std::make_pair(ratioValues.data(), daughters.begin()); itPair.first != ratioValues.data()+ratios.size() && itPair.second != daughters.end(); ++itPair.first, ++itPair.second)
-      spectrum += (*itPair.first) * itPair.second->getSpectrum();
+      realisation += (*itPair.first) * itPair.second->getRealisation();
+    
+    return realisation;
 
   }
+  else return getSpectrum();
+  
+};
+
+template <class T>
+const T& State<T>::getSpectrum(){
+  
   return spectrum;
   
 };
