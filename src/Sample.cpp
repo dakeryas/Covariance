@@ -1,5 +1,8 @@
 #include "Sample.hpp"
 
+using namespace std;
+using namespace Eigen;
+
 void setCosmetics(TH1D& h){
   
   h.SetLineWidth(2);

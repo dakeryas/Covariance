@@ -1,6 +1,6 @@
 #include "SampleSlope.hpp"
 
-ostream& operator<<(ostream& output, const SampleSlope& corr){//for input masses in MeV sets the file into GeV
+std::ostream& operator<<(std::ostream& output, const SampleSlope& corr){//for input masses in MeV sets the file into GeV
 
   output<<"COV = "<<"\n"<<corr.GetVar()<<"\n"<<"\n"
   <<"Relative errors = "<<"\n"<<corr.GetRelErrors()<<"\n"<<"\n";

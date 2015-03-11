@@ -6,7 +6,7 @@ ConvergenceTester::ConvergenceTester(double espilon, unsigned int dequeMaxSize):
 
 }
 
-void ConvergenceTester::feed(const MatrixXd& Var){
+void ConvergenceTester::feed(const Eigen::MatrixXd& Var){
   
   if(Var.size() == oldVar.front().size() || oldVar.empty()){
     

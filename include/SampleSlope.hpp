@@ -6,7 +6,7 @@
 class SampleSlope: public Sample{
   
   double slope;
-  VectorXd binErrors;
+  Eigen::VectorXd binErrors;
   void FillBinErrors(const TH1D& h);
   void FillVarFromErrors();
   
@@ -15,6 +15,6 @@ public:
   
 };
 
-ostream& operator<<(ostream& output, const SampleSlope& corr);
+std::ostream& operator<<(std::ostream& output, const SampleSlope& corr);
 
 #endif
