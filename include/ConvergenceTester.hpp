@@ -19,7 +19,7 @@ public:
   unsigned getMaxRange() const;//returns max size
   bool converges() const;//returns convergence
   void setMaxRange(unsigned newDequeMaxSize); //change the deque's max size
-  void setPrecision(const double epsilon);//change epsilon's value
+  void setPrecision(double epsilon);//change epsilon's value
 
 };
 
@@ -100,7 +100,7 @@ void ConvergenceTester<T>::setMaxRange(unsigned int newDequeMaxSize){
 }
 
 template <class T>
-void ConvergenceTester<T>::setPrecision(const double epsilon){
+void ConvergenceTester<T>::setPrecision(double epsilon){
   
   this->epsilon = epsilon;
 
