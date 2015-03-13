@@ -15,7 +15,8 @@ class CovarianceEstimator{
   void addSample();//pick new realisations of variable1 and variable2 and update the covariance matrix with it
   
 public:
-  CovarianceEstimator(const T& variable1, const T& variable2);
+  CovarianceEstimator(const T& variable1, const T& variable2);//the variables need to implement a getRealisation() method
+  CovarianceEstimator(const T& variable);//sets variable1 and variable2 to variable
   unsigned getNumberOfIterations() const;
   const T& getVariable1() const;
   const T& getVariable2() const;
@@ -42,6 +43,11 @@ CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variabl
   mean2.setZero();
   product.setZero();
   var.setZero();
+  
+}
+
+template <class T>
+CovarianceEstimator<T>::CovarianceEstimator(const T& variable):CovarianceEstimator(variable1, variable2){
   
 }
 
