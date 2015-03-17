@@ -24,6 +24,16 @@ public:
 };
 
 template <class T>
+std::ostream& operator<<(std::ostream& output, const ConvergenceTester<T>& convergenceTester){
+  
+  output<<"Relative accuracy demanded = "<<convergenceTester.getPrecision()<<"\n"
+    <<"Number of close matrices demanded = "<<"\n"<<convergenceTester.getMaxRange()<<"\n";
+  return output;
+  
+}
+
+
+template <class T>
 ConvergenceTester<T>::ConvergenceTester(double espilon, unsigned int dequeMaxSize):oldVar(0),epsilon(espilon){
   
   setMaxRange(dequeMaxSize);
