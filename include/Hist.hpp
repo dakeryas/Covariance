@@ -24,7 +24,8 @@ public:
   void setZero();//set all bin contents to zero
   void setErrors(const Eigen::VectorXd& errors);
   void setErrorsFrom(const Eigen::MatrixXd& binsCovarianceMatrix);//sets the errors to the diagonal of the square root 
-  bool isCompatibleWith(const Hist& other) const; //checks if the binnings match 
+  bool isCompatibleWith(const Hist& other) const; //checks if the binnings match
+  bool isEmpty() const;//detects whether the edge has at least two elements
   
 };
 

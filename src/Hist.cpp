@@ -43,6 +43,8 @@ Hist& Hist::operator+=(const Hist& other){
     SetName((GetName() + string("_+_") + other.GetName()).c_str());
     
   }
+  else if(isEmpty()) *this = other;//if the histogram was empty use the assignment operator
+    
   return *this;
 
 }
@@ -109,5 +111,11 @@ void Hist::setErrorsFrom(const Eigen::MatrixXd& binsCovarianceMatrix){
 bool Hist::isCompatibleWith(const Hist& other) const{
   
   return edge == other.edge;
+
+}
+
+bool Hist::isEmpty() const{
+  
+  return getDimension() > 0;
 
 }
