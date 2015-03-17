@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include <iomanip>
 #include <vector>
 #include <utility>
 #include "Ratio.hpp"
@@ -23,14 +24,22 @@ public:
   virtual T getRealisation() = 0;//picks random ratios and returns the resulting spectrum or returns the spectrum for a leaf
   const std::vector<std::unique_ptr<State<T>>>& getDaughters() const;
   virtual std::unique_ptr<State<T>> clone() const = 0;//for the copy constructor that needs polymorphism
+  static void print(std::ostream& output, const State<T>& state, unsigned depth);//print state knowing its depth in the root state that contains it
   
 };
 
 template <class T>
+void State<T>::print(std::ostream& output, const State< T >& state, unsigned depth){
+
+  output<<std::setw(depth)<<' '<<state.getDaughters().size()<<"\n";
+  for(const auto& daughter : state.getDaughters()) State<T>::print(output, *daughter, depth+4);
+  
+}
+
+template <class T>
 std::ostream& operator<<(std::ostream& output, const State<T>& state){
   
-  output<<state.getDaughters().size()<<"\n\t";
-  for(const auto& daughter : state.getDaughters()) output<<*daughter;
+  State<T>::print(output, state, 0);
   return output;
   
 }

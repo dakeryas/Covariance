@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream& output, const ConvergenceTester<T>& conve
 
 
 template <class T>
-ConvergenceTester<T>::ConvergenceTester(double espilon, unsigned int dequeMaxSize):oldVar(0),epsilon(espilon){
+ConvergenceTester<T>::ConvergenceTester(double espilon, unsigned dequeMaxSize):oldVar(0),epsilon(espilon){
   
   setMaxRange(dequeMaxSize);
 
@@ -98,7 +98,7 @@ bool ConvergenceTester<T>::converges() const{
 }
 
 template <class T>
-void ConvergenceTester<T>::setMaxRange(unsigned int newDequeMaxSize){
+void ConvergenceTester<T>::setMaxRange(unsigned newDequeMaxSize){
   
   if(newDequeMaxSize > 0){
   
