@@ -37,7 +37,7 @@ std::ostream& operator<<(std::ostream& output, const CovarianceEstimator<T>& cov
 }
 
 template <class T>
-CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variable2):n(0),variable1(variable1),variable2(variable2),mean1(variable1.getDimension()),mean2(mean2.getDimension()),product(variable1.getDimension(),variable2.getDimension()),var(product.rows(),product.cols()){
+CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variable2):n(0),variable1(variable1),variable2(variable2),mean1(variable1.getDimensionOfRealisations()),mean2(variable2.getDimensionOfRealisations()),product(mean1.size(),mean2.size()),var(product.rows(),product.cols()){
   
   mean1.setZero();
   mean2.setZero();
@@ -47,59 +47,61 @@ CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variabl
 }
 
 template <class T>
-CovarianceEstimator<T>::CovarianceEstimator(const T& variable):CovarianceEstimator(variable1, variable2){
+CovarianceEstimator<T>::CovarianceEstimator(const T& variable):CovarianceEstimator(variable, variable){
   
 }
 
 template <class T>
-unsigned CovarianceEstimator::getNumberOfIterations() const{
+unsigned CovarianceEstimator<T>::getNumberOfIterations() const{
   
   return n;
 
 }
 
 template <class T>
-const T& CovarianceEstimator::getVariable1() const{
+const T& CovarianceEstimator<T>::getVariable1() const{
   
   return variable1;
 
 }
 
 template <class T>
-const T& CovarianceEstimator::getVariable2() const{
+const T& CovarianceEstimator<T>::getVariable2() const{
   
   return variable2;
 
 }
 
 template <class T>
-Eigen::VectorXd& CovarianceEstimator::getMean1() const{
+Eigen::VectorXd& CovarianceEstimator<T>::getMean1() const{
   
   return mean1;
 
 }
 
 template <class T>
-Eigen::VectorXd& CovarianceEstimator::getMean2() const{
+Eigen::VectorXd& CovarianceEstimator<T>::getMean2() const{
   
   return mean2;
 
 }
 
 template <class T>
-Eigen::MatrixXd CovarianceEstimator::getCovarianceMatrix() const{
+Eigen::MatrixXd CovarianceEstimator<T>::getCovarianceMatrix() const{
   
   return var;
 
 }
 
 template <class T>
-void CovarianceEstimator::addSample(){
+void CovarianceEstimator<T>::addSample(){
   
   const double nd = n;
   
-  auto x1 = variable1.getRealisation();
-  auto x2 = variable2.getRealisation();
+  auto realisation1 = variable1.getRealisation();
+  auto realisation2 = variable2.getRealisation();
+  auto x1 = Eigen::Map<const Eigen::VectorXd>(realisation1.data(), realisation1.getDimension());
+  auto x2 = Eigen::Map<const Eigen::VectorXd>(realisation2.data(), realisation2.getDimension());
   
   mean1 = x1/(nd+1)+mean1*nd/(nd+1);
   mean2 = x2/(nd+1)+mean2*nd/(nd+1);
@@ -113,9 +115,9 @@ void CovarianceEstimator::addSample(){
 }
 
 template <class T>
-void CovarianceEstimator::estimate(double epsilon, unsigned cauchyNumber){
+void CovarianceEstimator<T>::estimate(double epsilon, unsigned cauchyNumber){
 
-  ConvergenceTester<T> convergenceTester(epsilon, cauchyNumber);
+  ConvergenceTester<CovarianceEstimator<T>> convergenceTester(epsilon, cauchyNumber);
   
   while(!convergenceTester.converges()){
     

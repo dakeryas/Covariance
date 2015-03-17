@@ -54,7 +54,7 @@ void ConvergenceTester<T>::feed(const Eigen::MatrixXd& Var){
 template <class T>
 void ConvergenceTester<T>::feed(const T& covarianceEstimator){
   
-  feed(covarianceEstimator.getVar());
+  feed(covarianceEstimator.getCovarianceMatrix());
 
 }
 
