@@ -13,6 +13,7 @@ public:
   unsigned getDimensionOfRealisations() const;
   T getRealisation();//picks random ratios and returns the resulting spectrum or returns getSpectrum() if the ratios are empty
   void setSpectrum(const T& spectrum);
+  std::unique_ptr<State<T>> clone() const;
   
 };
 
@@ -40,6 +41,13 @@ void FinalState<T>::setSpectrum(const T& spectrum){
   
   this->spectrum = spectrum;
   
+}
+
+template <class T>
+std::unique_ptr< State< T > > FinalState<T>::clone() const{
+  
+  return std::unique_ptr<State<T>>(new FinalState<T>(*this));
+
 }
 
 #endif

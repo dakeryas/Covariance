@@ -11,12 +11,17 @@ class UnstableState: public State<T>{ //node class using the Mersenne Twister ge
   std::vector<std::unique_ptr<Ratio>> ratios;
 
 public:
-  UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios);
+  UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios);//it always takes ownership of the pointers passed
   UnstableState(std::vector<State<T>*> daughters);
+  UnstableState(const UnstableState<T>& other);
+  UnstableState(UnstableState<T>&& other) = default;
+  UnstableState<T>& operator=(const UnstableState<T>& other);
+  UnstableState<T>& operator=(UnstableState<T>&& other) = default;
   unsigned getDimensionOfRealisations() const;
   T getRealisation();//picks random ratios and returns the resulting spectrum
   void addDaughter(State<T>* daughter);
   void addDaughter(State<T>* daughter, Ratio* ratio);
+  std::unique_ptr<State<T>> clone() const;
   
 };
 
@@ -30,6 +35,14 @@ UnstableState<T>::UnstableState(std::vector<State<T>*> daughters):UnstableState(
   
   for(const auto& daughter : State<T>::daughters) ratios.emplace_back(new UniformRatio);
   
+}
+
+template <class T>
+UnstableState<T>::UnstableState(const UnstableState< T >& other):State<T>(other){
+  
+  ratios.reserve(other.ratios.size());
+  for(const auto& ratio : other.ratios) this->ratios.emplace_back(ratio->clone());
+
 }
 
 template <class T>
@@ -71,6 +84,13 @@ void UnstableState<T>::addDaughter(State<T>* daughter){
   
   addDaughter(daughter, new UniformRatio);
   
+}
+
+template <class T>
+std::unique_ptr< State< T > > UnstableState<T>::clone() const{
+  
+  return std::unique_ptr<State<T>>(new UnstableState<T>(*this));
+
 }
 
 #endif
