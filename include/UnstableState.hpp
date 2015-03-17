@@ -13,6 +13,7 @@ class UnstableState: public State<T>{ //node class using the Mersenne Twister ge
 public:
   UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios);
   UnstableState(std::vector<State<T>*> daughters);
+  unsigned getDimensionOfRealisations() const;
   T getRealisation();//picks random ratios and returns the resulting spectrum
   void addDaughter(State<T>* daughter);
   void addDaughter(State<T>* daughter, Ratio* ratio);
@@ -20,14 +21,22 @@ public:
 };
 
 template <class T>
-UnstableState<T>::UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios):State<T>(daughters),ratios(ratios){
+UnstableState<T>::UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios):State<T>(daughters),ratios(ratios.begin(),ratios.end()){
   
 }
 
 template <class T>
 UnstableState<T>::UnstableState(std::vector<State<T>*> daughters):UnstableState(daughters, {}){
   
-  for(const auto& daughter : State<T>::daughters) ratios.push_back(std::unique_ptr<Ratio>(new UniformRatio));
+  for(const auto& daughter : State<T>::daughters) ratios.emplace_back(new UniformRatio);
+  
+}
+
+template <class T>
+unsigned UnstableState<T>::getDimensionOfRealisations() const{
+
+  for(const auto& daughter : State<T>::daughters) return daughter->getDimensionOfRealisations();
+  return 0;
   
 }
 
@@ -52,8 +61,8 @@ T UnstableState<T>::getRealisation(){
 template <class T>
 void UnstableState<T>::addDaughter(State<T>* daughter, Ratio* ratio){
   
-  State<T>::daughters.push_back(std::unique_ptr<State<T>>(daughter));
-  ratios.push_back(std::unique_ptr<Ratio>(ratio));
+  State<T>::daughters.emplace_back(daughter);
+  ratios.emplace_back(ratio);
   
 }
 
