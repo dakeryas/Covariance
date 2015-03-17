@@ -23,7 +23,7 @@ public:
   Eigen::VectorXd& getMean1() const;
   Eigen::VectorXd& getMean2() const;
   Eigen::MatrixXd getCovarianceMatrix() const;
-  void estimate(double epsilon = 1e-3, unsigned cauchyNumber = 3);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
+  void estimate(double epsilon, unsigned cauchyNumber);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
 };
 
