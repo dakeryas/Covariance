@@ -38,20 +38,25 @@ namespace FileReader{
   Hist read(const boost::filesystem::path& filePath){
   
     Hist hist;
-    
-    TKey* currentKey; //to point to the 'items' in a root file
-    TObject* readObject;//to flush the key into a TObject
-    
-    TFile file(filePath.string().c_str());
-    
-    TIter keyit(file.GetListOfKeys()); //iterator over the contents of filePath
-    while((currentKey = dynamic_cast<TKey*>(keyit()))){ //returns the pointer and increment it, when the pointer is not allocated it returns zero so the loop ends
+
+    if(boost::filesystem::is_regular_file(filePath)){
       
-      readObject = currentKey->ReadObj();//this is silly to cast a TObject to a TKey to eventually return a TObject with the ReadObj method, but heh, this is ROOT !
-      if(itemMatches(readObject, "TH1")) readAsHist(hist, readObject);//reads a key to retrieve a TH1 and store it in h
-      else if(itemMatches(readObject, "TCanvas")) readFromCan(hist, readObject);//reads a key to retrieve a TH1 from a canvas and store it in h
+      TFile file(filePath.string().c_str());
       
-    };
+      TKey* currentKey; //to point to the 'items' in a root file
+      TObject* readObject;//to flush the key into a TObject
+      
+      TIter keyit(file.GetListOfKeys()); //iterator over the contents of filePath
+      while((currentKey = dynamic_cast<TKey*>(keyit()))){ //returns the pointer and increment it, when the pointer is not allocated it returns zero so the loop ends
+	
+	readObject = currentKey->ReadObj();//this is silly to cast a TObject to a TKey to eventually return a TObject with the ReadObj method, but heh, this is ROOT !
+	if(itemMatches(readObject, "TH1")) readAsHist(hist, readObject);//reads a key to retrieve a TH1 and store it in h
+	else if(itemMatches(readObject, "TCanvas")) readFromCan(hist, readObject);//reads a key to retrieve a TH1 from a canvas and store it in h
+	
+      };
+      
+    }
+    else std::cout<<filePath.string()<<" is not a regular file\n";
     
     return hist;
 
