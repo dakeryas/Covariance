@@ -31,5 +31,6 @@ public:
 
 Hist operator+(Hist h1, const Hist& h2);
 std::ostream& operator<<(std::ostream& output, const Hist& hist);
+void normalise(Hist& h, double newArea = 1);//normalise 'h' to 'newArea'
 
 #endif

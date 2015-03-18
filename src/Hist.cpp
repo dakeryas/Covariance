@@ -17,7 +17,7 @@ Hist operator+(Hist h1, const Hist& h2){
 
 }
 
-void Hist::normalise(Hist& h, double newArea){
+void normalise(Hist& h, double newArea){
   
   double integral = h.Integral();
   if(integral != 0) h.Scale(newArea/integral);
