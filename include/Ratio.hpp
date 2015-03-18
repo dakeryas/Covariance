@@ -2,7 +2,6 @@
 #define RATIO_H
 
 #include <random>
-#include <chrono>
 #include <memory>
 #include <iostream>
 
