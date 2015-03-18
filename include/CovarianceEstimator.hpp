@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& output, const CovarianceEstimator<T>& cov
 
 template <class T>
 CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variable2):n(0),variable1(variable1),variable2(variable2),mean1(variable1.getDimensionOfRealisations()),mean2(variable2.getDimensionOfRealisations()),product(mean1.size(),mean2.size()),var(product.rows(),product.cols()){
-  
+
   mean1.setZero();
   mean2.setZero();
   product.setZero();
@@ -123,7 +123,7 @@ void CovarianceEstimator<T>::estimate(double epsilon, unsigned cauchyNumber){
     
     addSample();
     convergenceTester.feed(*this);
-    
+
   }
   
 }

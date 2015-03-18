@@ -34,26 +34,24 @@ std::ostream& operator<<(std::ostream& output, const ConvergenceTester<T>& conve
 
 
 template <class T>
-ConvergenceTester<T>::ConvergenceTester(double espilon, unsigned dequeMaxSize):oldVar(0),epsilon(espilon){
-  
-  setMaxRange(dequeMaxSize);
+ConvergenceTester<T>::ConvergenceTester(double espilon, unsigned dequeMaxSize):epsilon(espilon),dequeMaxSize(dequeMaxSize){
 
 }
 
 template <class T>
-void ConvergenceTester<T>::feed(const Eigen::MatrixXd& Var){
+void ConvergenceTester<T>::feed(const Eigen::MatrixXd& var){
   
-  if(Var.size() == oldVar.front().size() || oldVar.empty()){
+  if(oldVar.empty() || var.size() == oldVar.front().size()){
     
     if(oldVar.size() < dequeMaxSize){
       
-      oldVar.push_back(Var);
+      oldVar.emplace_back(var);
       
     }
     else{
       
       oldVar.pop_front();
-      oldVar.push_back(Var);
+      oldVar.emplace_back(var);
       
     }
     
@@ -100,12 +98,8 @@ bool ConvergenceTester<T>::converges() const{
 template <class T>
 void ConvergenceTester<T>::setMaxRange(unsigned newDequeMaxSize){
   
-  if(newDequeMaxSize > 0){
-  
-    if(newDequeMaxSize < dequeMaxSize) oldVar.resize(newDequeMaxSize);
-    else dequeMaxSize = newDequeMaxSize; // we are now able to feed the ConvergenceTester with new elements
-    
-  }
+  if(newDequeMaxSize < dequeMaxSize) oldVar.resize(newDequeMaxSize);
+  else dequeMaxSize = newDequeMaxSize; // we are now able to feed the ConvergenceTester with new elements
 
 }
 
