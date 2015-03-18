@@ -1,13 +1,11 @@
 # include "Hist.hpp"
 
-using namespace::std;
-
-ostream& operator<<(ostream& output, const Hist& h){
+std::ostream& operator<<(std::ostream& output, const Hist& h){
   
   output<<h.GetName()<<"\n";
-  for(unsigned k = 0; k<h.getDimension(); ++k) output<<"["<<setw(6)<<internal<<h.GetXaxis()->GetBinLowEdge(k+1)<<", "<<setw(6)<<internal<<h.GetXaxis()->GetBinUpEdge(k+1)<<"]"<<setw(8)<<left<<" "
-    <<"-->"<<setw(8)<<left<<" "<<setw(12)<<left<<h.GetBinContent(k+1)
-    <<"+/-"<<setw(2)<<left<<" "<<setw(12)<<left<<h.GetBinError(k+1)<<"\n";
+  for(unsigned k = 0; k<h.getDimension(); ++k) output<<"["<<std::setw(6)<<std::internal<<h.GetXaxis()->GetBinLowEdge(k+1)<<", "<<std::setw(6)<<std::internal<<h.GetXaxis()->GetBinUpEdge(k+1)<<"]"<<std::setw(8)<<std::left<<" "
+    <<"-->"<<std::setw(8)<<std::left<<" "<<std::setw(12)<<std::left<<h.GetBinContent(k+1)
+    <<"+/-"<<std::setw(2)<<std::left<<" "<<std::setw(12)<<std::left<<h.GetBinError(k+1)<<"\n";
   return output;
   
 }
@@ -16,6 +14,13 @@ Hist operator+(Hist h1, const Hist& h2){
   
   h1 += h2;
   return h1;
+
+}
+
+void Hist::normalise(Hist& h, double newArea){
+  
+  double integral = h.Integral();
+  if(integral != 0) h.Scale(newArea/integral);
 
 }
 
@@ -40,7 +45,7 @@ Hist& Hist::operator+=(const Hist& other){
   if(isCompatibleWith(other)){
     
     Add(&other);
-    SetName((GetName() + string("_+_") + other.GetName()).c_str());
+    SetName((GetName() + std::string("_+_") + other.GetName()).c_str());
     
   }
   else if(isEmpty()) *this = other;//if the histogram was empty use the assignment operator
@@ -52,7 +57,7 @@ Hist& Hist::operator+=(const Hist& other){
 Hist& Hist::operator*=(double a){
   
   this->Scale(a);
-  SetName((GetName() + string("_x_")+ to_string(a)).c_str());
+  SetName((GetName() + std::string("_x_")+ std::to_string(a)).c_str());
   return *this;
 
 }
@@ -62,7 +67,7 @@ void Hist::fillEdge(){//turn an array into a vector
   int n = GetNbinsX();
   double edgeArray[n];
   GetLowEdge(edgeArray);
-  edge = vector<double>(edgeArray, edgeArray + n);
+  edge = std::vector<double>(edgeArray, edgeArray + n);
   edge.push_back(GetBinLowEdge(n+1));//the low edge of the overflow bin should be the upper edge of the previous bin
   
 }
@@ -73,7 +78,7 @@ unsigned Hist::getDimension() const{
   
 }
 
-const vector<double>& Hist::getEdge() const{
+const std::vector<double>& Hist::getEdge() const{
 
   return edge;
   
@@ -97,7 +102,7 @@ void Hist::setErrors(const Eigen::VectorXd& errors){
   double errorArray[errors.size() + 2];
   errorArray[0] = 0;//there is no error for the underflow
   errorArray[errors.size() + 1] = 0; //there is no error for the overflow
-  copy(errors.data(), errors.data() + errors.size(), errorArray + 1);
+  std::copy(errors.data(), errors.data() + errors.size(), errorArray + 1);
   SetError(errorArray);
 
 }
