@@ -8,7 +8,7 @@ ConvergenceTester::ConvergenceTester(double espilon, unsigned int dequeMaxSize):
 
 void ConvergenceTester::feed(const MatrixXd& Var){
   
-  if(Var.size() == oldVar.front().size() || oldVar.empty()){
+  if(oldVar.empty() || Var.size() == oldVar.front().size()){
     
     if(oldVar.size() < dequeMaxSize){
       
