@@ -24,19 +24,15 @@ void normalise(Hist& h, double newArea){
 
 }
 
-Hist::Hist(){
+Hist::Hist(const std::string& name, const std::string& title, unsigned dimension, double firstEdge, double lastEdge):TH1D(name.c_str(), title.c_str(), dimension, firstEdge, lastEdge){  
+
+  fillEdge();
   
 }
 
 Hist::Hist(const TH1D& h):TH1D(h){
   
   fillEdge();
-  
-}
-
-Hist::Hist(const Hist& other):TH1D(other){
-  
-  edge = other.edge;
   
 }
 
@@ -84,26 +80,47 @@ const std::vector<double>& Hist::getEdge() const{
   
 }
 
+double Hist::getFirstEdge() const{
+  
+  return edge.front();
+
+}
+
+double Hist::getLastEdge() const{
+  
+  return edge.back();
+
+}
+
 const double* Hist::data() const{
   
   return GetArray() + 1;
 
 }
 
+void Hist::setBinContents(const Eigen::VectorXd& binContents){
+  
+  if(binContents.size() == getDimension()){
+    
+    for(unsigned k = 0; k < getDimension(); ++k) SetBinContent(k, binContents(k));
+    
+  }
+
+}
+
 void Hist::setZero(){
   
-  double binContents[getDimension()+2] = {};//we need the underflow and the overflow to be zero as well
-  SetContent(binContents);
+  setBinContents(Eigen::VectorXd::Zero(getDimension()));
 
 }
 
 void Hist::setErrors(const Eigen::VectorXd& errors){
   
-  double errorArray[errors.size() + 2];
-  errorArray[0] = 0;//there is no error for the underflow
-  errorArray[errors.size() + 1] = 0; //there is no error for the overflow
-  std::copy(errors.data(), errors.data() + errors.size(), errorArray + 1);
-  SetError(errorArray);
+  if(errors.size() == getDimension()){
+    
+    for(unsigned k = 0; k < getDimension(); ++k) SetBinError(k, errors(k));
+    
+  }
 
 }
 
