@@ -9,7 +9,7 @@ using US = UnstableState<Hist>;
 using FS = FinalState<Hist>;
 using GR = GaussianRatio;
 
-void saveCovarianceHe(const boost::filesystem::path& database, double epsilon = 1e-3, unsigned cauchyNumber = 3){
+void saveCovarianceHe(const boost::filesystem::path& database, double epsilon = 1e-4, unsigned cauchyNumber = 3){
   
   std::map<std::string, Hist> spectra;
   
@@ -59,7 +59,15 @@ int main (int argc, char* argv[]){
   if(argc > 1){
     
     std::string databasePath = argv[1];
-    if(boost::filesystem::is_directory(databasePath)) saveCovarianceHe(databasePath);
+    
+    if(boost::filesystem::is_directory(databasePath)){
+
+      if(argc == 2) saveCovarianceHe(databasePath);
+      else if(argc == 3) saveCovarianceHe(databasePath, std::stod(argv[2]));
+      else if(argc == 4) saveCovarianceHe(databasePath, std::stod(argv[2]), std::stol(argv[3]));
+      
+    }
+    
     
   }
   

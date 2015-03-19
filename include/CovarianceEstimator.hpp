@@ -20,9 +20,9 @@ public:
   unsigned getNumberOfIterations() const;
   const T& getVariable1() const;
   const T& getVariable2() const;
-  Eigen::VectorXd& getMean1() const;
-  Eigen::VectorXd& getMean2() const;
-  Eigen::MatrixXd getCovarianceMatrix() const;
+  const Eigen::VectorXd& getMean1() const;
+  const Eigen::VectorXd& getMean2() const;
+  const Eigen::MatrixXd& getCovarianceMatrix() const;
   void estimate(double epsilon, unsigned cauchyNumber);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
 };
@@ -31,7 +31,9 @@ template <class T>
 std::ostream& operator<<(std::ostream& output, const CovarianceEstimator<T>& covarianceEstimator){
   
   output<<"Number of iterations = "<<covarianceEstimator.getNumberOfIterations()<<"\n"
-    <<"Covariance Matrix = "<<"\n"<<covarianceEstimator.getCovarianceMatrix()<<"\n";
+    <<"Covariance Matrix = "<<"\n"<<covarianceEstimator.getCovarianceMatrix()<<"\n"
+    <<"Mean1 = "<<"\n"<<covarianceEstimator.getMean1()<<"\n"
+    <<"Mean2 = "<<"\n"<<covarianceEstimator.getMean2()<<"\n";
   return output;
   
 }
@@ -73,21 +75,21 @@ const T& CovarianceEstimator<T>::getVariable2() const{
 }
 
 template <class T>
-Eigen::VectorXd& CovarianceEstimator<T>::getMean1() const{
+const Eigen::VectorXd& CovarianceEstimator<T>::getMean1() const{
   
   return mean1;
 
 }
 
 template <class T>
-Eigen::VectorXd& CovarianceEstimator<T>::getMean2() const{
+const Eigen::VectorXd& CovarianceEstimator<T>::getMean2() const{
   
   return mean2;
 
 }
 
 template <class T>
-Eigen::MatrixXd CovarianceEstimator<T>::getCovarianceMatrix() const{
+const Eigen::MatrixXd& CovarianceEstimator<T>::getCovarianceMatrix() const{
   
   return var;
 

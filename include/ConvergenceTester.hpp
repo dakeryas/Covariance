@@ -13,7 +13,7 @@ class ConvergenceTester{
   void feed(const Eigen::MatrixXd& var);//add another var from a sample to the deque and pop the oldest element
   
 public:
-  ConvergenceTester(double espilon, unsigned dequeMaxSize);//by default only use 3 levels 
+  ConvergenceTester(double espilon, unsigned dequeMaxSize);//by default only use 3 levels and stops when a relative precision of epsilon is obtained
   void feed(const T& covarianceEstimator);//get the variance matrix from the sample
   double getPrecision() const;//return epsilon
   unsigned getMaxRange() const;//returns max size
