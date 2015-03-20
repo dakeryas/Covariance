@@ -25,7 +25,7 @@ double GaussianRatio::getStandardDeviation() const{
 double GaussianRatio::getRealisation(){
   
   double realisation = distribution(randomGenerator);
-  while(realisation < 0 || realisation > 1) realisation = distribution(randomGenerator);//we don't want the gaussian's tails that produce negative or higher than one ratios
+  while(realisation < 0) realisation = distribution(randomGenerator);//we don't want the gaussian's tails that produce negative or higher than one ratios
   return realisation;
   
 }

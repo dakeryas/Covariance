@@ -22,7 +22,7 @@ public:
   void addDaughter(State<T>* daughter);
   void addDaughter(State<T>* daughter, Ratio* ratio);
   std::unique_ptr<State<T>> clone() const;
-  
+
 };
 
 template <class T>
@@ -64,14 +64,14 @@ unsigned UnstableState<T>::getDimensionOfRealisations() const{
 
 template <class T>
 T UnstableState<T>::getRealisation(){
-  
+
   T realisation;//use a temporary to allow for a 'std::move'
   
   Eigen::ArrayXd ratioValues(ratios.size());
   for(auto itPair = std::make_pair(ratioValues.data(), ratios.begin()); itPair.first != ratioValues.data()+ratios.size() && itPair.second != ratios.end(); ++itPair.first, ++itPair.second)
     *itPair.first = (*itPair.second)->getRealisation();
   ratioValues = ratioValues/ratioValues.sum();
-  
+
   for(auto itPair = std::make_pair(ratioValues.data(), State<T>::daughters.begin()); itPair.first != ratioValues.data()+ratioValues.size() && itPair.second != State<T>::daughters.end(); ++itPair.first, ++itPair.second)
     realisation += (*itPair.first) * (*itPair.second)->getRealisation();
 
