@@ -227,7 +227,7 @@ void spectrum::PickRatiosFromError(){
   for(unsigned k = 0; k<r.size(); ++k){
     
     r[k] = ran.Gaus(rmean[k],rmean[k]*re[k]);
-    while(r[k]<0 || r[k]>1) r[k] = ran.Gaus(rmean[k],rmean[k]*re[k]);
+    while(r[k]<0) r[k] = ran.Gaus(rmean[k],rmean[k]*re[k]);
     s+= r[k];
     
   }
