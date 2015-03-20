@@ -102,7 +102,7 @@ void Hist::setBinContents(const Eigen::VectorXd& binContents){
   
   if(binContents.size() == getDimension()){
     
-    for(unsigned k = 0; k < getDimension(); ++k) SetBinContent(k, binContents(k));
+    for(unsigned k = 0; k < getDimension(); ++k) SetBinContent(k+1, binContents(k));
     
   }
 
@@ -118,7 +118,7 @@ void Hist::setErrors(const Eigen::VectorXd& errors){
   
   if(errors.size() == getDimension()){
     
-    for(unsigned k = 0; k < getDimension(); ++k) SetBinError(k, errors(k));
+    for(unsigned k = 0; k < getDimension(); ++k) SetBinError(k+1, errors(k));
     
   }
 
