@@ -1,5 +1,6 @@
 #include <map>
 #include "FileReader.hpp"
+#include "VarianceEstimator.hpp"
 #include "CovarianceEstimator.hpp"
 #include "UnstableState.hpp"
 #include "FinalState.hpp"
@@ -47,9 +48,9 @@ void saveCovarianceHe(const boost::filesystem::path& database, double epsilon = 
   );
   
   std::cout<<"Processing decay tree:\n"<<helium<<std::endl;
-  CovarianceEstimator<US> covarianceEstimator(helium);
-  covarianceEstimator.estimate(epsilon, cauchyNumber);
-  std::cout<<covarianceEstimator<<std::endl;
+  VarianceEstimator<US> varianceEstimator(helium);
+  varianceEstimator.estimate(epsilon, cauchyNumber);
+  std::cout<<varianceEstimator<<std::endl;
   
 }
 
