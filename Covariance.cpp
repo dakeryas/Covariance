@@ -6,11 +6,11 @@
 #include "FinalState.hpp"
 #include "GaussianRatio.hpp"
 
-using US = UnstableState<Hist>;
-using FS = FinalState<Hist>;
-using GR = GaussianRatio;
-
 void saveCovarianceHe(const boost::filesystem::path& database, double epsilon = 1e-4, unsigned cauchyNumber = 3){
+  
+  using US = UnstableState<Hist>;
+  using FS = FinalState<Hist>;
+  using GR = GaussianRatio;
   
   std::map<std::string, Hist> spectra;
   

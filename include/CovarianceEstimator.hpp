@@ -6,24 +6,24 @@
 template<class T>
 class CovarianceEstimator{ 
   
+  std::mt19937 randomGenerator1, randomGenerator2;//random generators used to get random values for variable1 and variable2, both are initialised with the same random seed
   unsigned n;//number of iterations for the process (when with a sample, n =1)
   T variable1, variable2;//variables whose Covariance matrix need be estimated
   Eigen::VectorXd mean1; //sample mean of variable1 after having had a look at n samples
   Eigen::VectorXd mean2; //sample mean of variable1 after having had a look at n samples
   Eigen::MatrixXd product; //after nth iterations, the mean value of the product x*y.transpose()
   Eigen::MatrixXd var; //covariance matrix
-  void addSample();//pick new realisations of variable1 and variable2 and update the covariance matrix with it
+  void addSample();//pick new realisations of variable1 and variable2 with randomGenerator and update the covariance matrix with it
   
 public:
   CovarianceEstimator(const T& variable1, const T& variable2);//the variables need to implement a getRealisation() method
-  CovarianceEstimator(const T& variable);//sets variable1 and variable2 to variable
   unsigned getNumberOfIterations() const;
   const T& getVariable1() const;
   const T& getVariable2() const;
   const Eigen::VectorXd& getMean1() const;
   const Eigen::VectorXd& getMean2() const;
   const Eigen::MatrixXd& getCovarianceMatrix() const;
-  void estimate(double epsilon, unsigned cauchyNumber);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
+  void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
 };
 
@@ -39,17 +39,12 @@ std::ostream& operator<<(std::ostream& output, const CovarianceEstimator<T>& cov
 }
 
 template <class T>
-CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variable2):n(0),variable1(variable1),variable2(variable2),mean1(variable1.getDimensionOfRealisations()),mean2(variable2.getDimensionOfRealisations()),product(mean1.size(),mean2.size()),var(product.rows(),product.cols()){
+CovarianceEstimator<T>::CovarianceEstimator(const T& variable1, const T& variable2):randomGenerator1(std::random_device()()),randomGenerator2(randomGenerator1),n(0),variable1(variable1),variable2(variable2),mean1(variable1.getDimensionOfRealisations()),mean2(variable2.getDimensionOfRealisations()),product(mean1.size(),mean2.size()),var(product.rows(),product.cols()){
 
   mean1.setZero();
   mean2.setZero();
   product.setZero();
   var.setZero();
-  
-}
-
-template <class T>
-CovarianceEstimator<T>::CovarianceEstimator(const T& variable):CovarianceEstimator(variable, variable){
   
 }
 
@@ -100,8 +95,8 @@ void CovarianceEstimator<T>::addSample(){
   
   const double nd = n;
   
-  auto realisation1 = variable1.getRealisation();
-  auto realisation2 = variable2.getRealisation();
+  auto realisation1 = variable1.getRealisation(randomGenerator1);
+  auto realisation2 = variable2.getRealisation(randomGenerator2);
   auto x1 = Eigen::Map<const Eigen::VectorXd>(realisation1.data(), realisation1.getDimension());
   auto x2 = Eigen::Map<const Eigen::VectorXd>(realisation2.data(), realisation2.getDimension());
   
@@ -117,7 +112,7 @@ void CovarianceEstimator<T>::addSample(){
 }
 
 template <class T>
-void CovarianceEstimator<T>::estimate(double epsilon, unsigned cauchyNumber){
+void CovarianceEstimator<T>::estimate(double epsilon, unsigned int cauchyNumber){
 
   ConvergenceTester<CovarianceEstimator<T>> convergenceTester(epsilon, cauchyNumber);
   

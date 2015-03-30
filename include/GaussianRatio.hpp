@@ -13,7 +13,7 @@ public:
   std::unique_ptr<Ratio> clone() const;//for polymorphism
   double getMean() const;
   double getStandardDeviation() const;
-  double getRealisation();
+  double getRealisation(std::mt19937& randomGenerator);
   
 };
 

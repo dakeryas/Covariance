@@ -22,7 +22,7 @@ double GaussianRatio::getStandardDeviation() const{
 
 }
 
-double GaussianRatio::getRealisation(){
+double GaussianRatio::getRealisation(std::mt19937& randomGenerator){
   
   double realisation = distribution(randomGenerator);
   while(realisation < 0) realisation = distribution(randomGenerator);//we don't want the gaussian's tails that produce negative ratios

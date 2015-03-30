@@ -18,7 +18,7 @@ public:
   UnstableState<T>& operator=(const UnstableState<T>& other);
   UnstableState<T>& operator=(UnstableState<T>&& other) = default;
   unsigned getDimensionOfRealisations() const;
-  T getRealisation();//picks random ratios and returns the resulting spectrum
+  T getRealisation(std::mt19937& randomGenerator);//picks random ratios and returns the resulting spectrum
   void addDaughter(State<T>* daughter);
   void addDaughter(State<T>* daughter, Ratio* ratio);
   std::unique_ptr<State<T>> clone() const;
@@ -63,17 +63,17 @@ unsigned UnstableState<T>::getDimensionOfRealisations() const{
 }
 
 template <class T>
-T UnstableState<T>::getRealisation(){
+T UnstableState<T>::getRealisation(std::mt19937& randomGenerator){
 
   T realisation;//use a temporary to allow for a 'std::move'
   
   Eigen::ArrayXd ratioValues(ratios.size());
   for(auto itPair = std::make_pair(ratioValues.data(), ratios.begin()); itPair.first != ratioValues.data()+ratios.size() && itPair.second != ratios.end(); ++itPair.first, ++itPair.second)
-    *itPair.first = (*itPair.second)->getRealisation();
+    *itPair.first = (*itPair.second)->getRealisation(randomGenerator);
   ratioValues = ratioValues/ratioValues.sum();
 
   for(auto itPair = std::make_pair(ratioValues.data(), State<T>::daughters.begin()); itPair.first != ratioValues.data()+ratioValues.size() && itPair.second != State<T>::daughters.end(); ++itPair.first, ++itPair.second)
-    realisation += (*itPair.first) * (*itPair.second)->getRealisation();
+    realisation += (*itPair.first) * (*itPair.second)->getRealisation(randomGenerator);
 
   return realisation;
   

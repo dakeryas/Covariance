@@ -22,7 +22,7 @@ double UniformRatio::getUpperBound() const{
 
 }
 
-double UniformRatio::getRealisation(){
+double UniformRatio::getRealisation(std::mt19937& randomGenerator){
   
   return distribution(randomGenerator);
   

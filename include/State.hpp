@@ -21,7 +21,7 @@ public:
   State<T>& operator=(State<T>&& other) = default;
   virtual ~State()= default;//to allow for proper destruction of the derived classes
   virtual unsigned getDimensionOfRealisations() const = 0;//returns the dimension of the first found data stored in the daughters
-  virtual T getRealisation() = 0;//picks random ratios and returns the resulting spectrum or returns the spectrum for a leaf
+  virtual T getRealisation(std::mt19937& randomGenerator) = 0;//picks random ratios and returns the resulting spectrum or returns the spectrum for a leaf
   const std::vector<std::unique_ptr<State<T>>>& getDaughters() const;
   virtual std::unique_ptr<State<T>> clone() const = 0;//for the copy constructor that needs polymorphism
   static void print(std::ostream& output, const State<T>& state, unsigned depth);//print state knowing its depth in the root state that contains it

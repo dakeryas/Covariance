@@ -6,6 +6,7 @@
 template<class T>
 class VarianceEstimator{ 
   
+  std::mt19937 randomGenerator;
   unsigned n;//number of iterations for the process (when with a sample, n =1)
   T variable;//variables whose Covariance matrix need be estimated
   Eigen::VectorXd mean; //sample mean of variable after having had a look at n samples
@@ -34,7 +35,7 @@ std::ostream& operator<<(std::ostream& output, const VarianceEstimator<T>& covar
 }
 
 template <class T>
-VarianceEstimator<T>::VarianceEstimator(const T& variable):n(0),variable(variable),mean(variable.getDimensionOfRealisations()),product(mean.size(),mean.size()),var(product.rows(),product.cols()){
+VarianceEstimator<T>::VarianceEstimator(const T& variable):randomGenerator(std::random_device()()),n(0),variable(variable),mean(variable.getDimensionOfRealisations()),product(mean.size(),mean.size()),var(product.rows(),product.cols()){
 
   mean.setZero();
   product.setZero();
@@ -75,7 +76,7 @@ void VarianceEstimator<T>::addSample(){
   
   const double nd = n;
   
-  auto realisation = variable.getRealisation();
+  auto realisation = variable.getRealisation(randomGenerator);
   auto x = Eigen::Map<const Eigen::VectorXd>(realisation.data(), realisation.getDimension());
   
   mean = x/(nd+1)+mean*nd/(nd+1);
