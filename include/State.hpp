@@ -57,7 +57,7 @@ State<T>::State(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios):da
 template <class T>
 State<T>::State(std::vector< State<T>* > daughters):State(daughters,{}){
   
-  for(const auto& daughter : daughters) ratios.emplace_back(new UniformRatio);
+  for(auto it = daughters.begin(); it != daughters.end(); ++it) ratios.emplace_back(new UniformRatio);
 
 }
 
