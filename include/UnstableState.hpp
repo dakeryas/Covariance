@@ -8,12 +8,9 @@ template <class T>
 class UnstableState: public State<T>{ //node class using the Mersenne Twister generator for the ratios of the edges
 
 public:
+  UnstableState() = default;
   UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios);//it always takes ownership of the pointers passed
   UnstableState(std::vector<State<T>*> daughters);
-  UnstableState(const UnstableState<T>& other) = default;
-  UnstableState(UnstableState<T>&& other) = default;
-  UnstableState<T>& operator=(const UnstableState<T>& other) = default;
-  UnstableState<T>& operator=(UnstableState<T>&& other) = default;
   unsigned getDimensionOfRealisations() const;
   T getRealisation(std::mt19937& randomGenerator);//picks random ratios and returns the resulting spectrum
   std::unique_ptr<State<T>> clone() const;

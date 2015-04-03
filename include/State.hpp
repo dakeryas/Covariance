@@ -1,7 +1,6 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <iomanip>
 #include <vector>
 #include <utility>
 #include "UniformRatio.hpp"
@@ -26,8 +25,8 @@ public:
   virtual T getRealisation(std::mt19937& randomGenerator) = 0;//picks random ratios and returns the resulting spectrum or returns the spectrum for a leaf
   const std::vector<std::unique_ptr<State<T>>>& getDaughters() const;
   std::vector<std::unique_ptr<State<T>>>& getDaughters();//returns assignable reference to the daughters
-  virtual void addDaughter(State<T>* daughter);
-  virtual void addDaughter(State<T>* daughter, Ratio* ratio);
+  void addDaughter(State<T>* daughter);
+  void addDaughter(State<T>* daughter, Ratio* ratio);
   virtual std::unique_ptr<State<T>> clone() const = 0;//for the copy constructor that needs polymorphism
   static void print(std::ostream& output, const State<T>& state, unsigned depth);//print state knowing its depth in the root state that contains it
   
@@ -100,10 +99,10 @@ std::vector<std::unique_ptr<State<T>>>& State<T>::getDaughters(){
 
 template <class T>
 void State<T>::addDaughter(State<T>* daughter, Ratio* ratio){
-  
+std::cout<<"Adding..."<<std::endl<<daughter<<std::endl<<*daughter<<std::endl<<ratio<<std::endl<<(*ratio)<<std::endl;
   daughters.emplace_back(daughter);
   ratios.emplace_back(ratio);
-  
+
 }
 
 template <class T>
