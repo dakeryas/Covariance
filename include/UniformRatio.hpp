@@ -14,6 +14,7 @@ public:
   double getLowerBound() const;
   double getUpperBound() const;
   double getRealisation(std::mt19937& randomGenerator);
+  std::ostream& print(std::ostream& output) const;
   
 };
 

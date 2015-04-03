@@ -14,6 +14,7 @@ public:
   double getMean() const;
   double getStandardDeviation() const;
   double getRealisation(std::mt19937& randomGenerator);
+  std::ostream& print(std::ostream& output) const;
   
 };
 

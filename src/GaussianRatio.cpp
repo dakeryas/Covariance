@@ -30,4 +30,9 @@ double GaussianRatio::getRealisation(std::mt19937& randomGenerator){
   
 }
 
+std::ostream& GaussianRatio::print(std::ostream& output) const{
+  
+  output<<"Mean = "<<std::setw(6)<<getMean()<<" Standard deviation = "<<std::setw(6)<<getStandardDeviation();
+  return output;
 
+}

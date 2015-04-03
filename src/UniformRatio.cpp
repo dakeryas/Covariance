@@ -27,3 +27,10 @@ double UniformRatio::getRealisation(std::mt19937& randomGenerator){
   return distribution(randomGenerator);
   
 }
+
+std::ostream& UniformRatio::print(std::ostream& output) const{
+  
+  output<<"Lower bound = "<<std::setw(6)<<getLowerBound()<<" Upper bound = "<<std::setw(6)<<getUpperBound();
+  return output;
+
+}
