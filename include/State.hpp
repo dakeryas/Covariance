@@ -99,7 +99,7 @@ std::vector<std::unique_ptr<State<T>>>& State<T>::getDaughters(){
 
 template <class T>
 void State<T>::addDaughter(State<T>* daughter, Ratio* ratio){
-std::cout<<"Adding..."<<std::endl<<daughter<<std::endl<<*daughter<<std::endl<<ratio<<std::endl<<(*ratio)<<std::endl;
+
   daughters.emplace_back(daughter);
   ratios.emplace_back(ratio);
 
