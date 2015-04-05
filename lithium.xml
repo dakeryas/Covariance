@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <database path= "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_gaus/Gd/Output"/>
+  <US>
+    <US ratio = "0.297" error = "0.03">
+      <FS datafile = "li_243_8Be_gaus.root"/>
+      <FS datafile = "li_243_5He_gaus.root"/>
+      <FS datafile = "li_243_aan_gaus.root"/>
+    </US>
+    <US ratio = "0.158" error = "0.03">
+      <FS datafile = "li_278_8Be_gaus.root"/>
+      <FS datafile = "li_278_5He_gaus.root"/>
+      <FS datafile = "li_278_8Be303_gaus.root"/>
+      <FS datafile = "li_278_aan_gaus.root"/>
+    </US>
+    <US ratio = "0.015" error = "0.005">
+      <FS datafile = "li_794_8Be_gaus.root"/>
+      <FS datafile = "li_794_5He_gaus.root"/>
+      <FS datafile = "li_794_8Be303_gaus.root"/>
+      <FS datafile = "li_794_5He374_gaus.root"/>
+      <FS datafile = "li_794_aan_gaus.root"/>
+    </US>
+    <US ratio = "0.011" error = "0.002">
+      <FS datafile = "li_1128_8Be_gaus.root"/>
+      <FS datafile = "li_1128_5He_gaus.root"/>
+      <FS datafile = "li_1128_8Be303_gaus.root"/>
+      <FS datafile = "li_1128_5He374_gaus.root"/>
+      <FS datafile = "li_1128_8Be1135_gaus.root"/>
+      <FS datafile = "li_1128_aan_gaus.root"/>
+    </US>
+    <US ratio = "0.027" error = "0.002">
+      <FS ratio = "0.02" error = "0.01" datafile = "li_1181_8Be_gaus.root"/>
+      <FS ratio = "0.28" error = "0.06" datafile = "li_1181_5He_gaus.root"/>
+      <FS ratio = "0.11" error = "0.06" datafile = "li_1181_8Be303_gaus.root"/>
+      <FS ratio = "0.47" error = "0.07" datafile = "li_1181_5He374_gaus.root"/>
+      <FS ratio = "0.12" error = "0.08" datafile = "li_1181_8Be1135_gaus.root"/>
+      <FS ratio = "0.01" error = "0.01" datafile = "li_1181_aan_gaus.root"/>
+    </US>
+  </US>
+</configuration>
+

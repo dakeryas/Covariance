@@ -40,7 +40,7 @@ void TreeParser<T>::parse(const boost::property_tree::ptree& tree, State<T>& sta
       auto spectrum = FileReader::read(databasePath/node.second.get<boost::filesystem::path>("<xmlattr>.datafile"));//retrieve the datafile field as boost::fs::path
       if(normaliseData) normalise(spectrum);
       if(ratio && error) state.addDaughter(new FinalState<T>(spectrum), new GaussianRatio(*ratio, *error));
-      state.addDaughter(new FinalState<T>(spectrum));//may have ratio and error attributes !
+      else state.addDaughter(new FinalState<T>(spectrum));//may have ratio and error attributes !
       
     }
     
