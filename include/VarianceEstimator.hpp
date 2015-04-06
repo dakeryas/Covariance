@@ -19,6 +19,7 @@ public:
   unsigned getNumberOfIterations() const;
   const T& getVariable() const;
   const Eigen::VectorXd& getMean() const;
+  Eigen::MatrixXd getCorrelationMatrix() const;
   const Eigen::MatrixXd& getCovarianceMatrix() const;
   void estimate(double epsilon, unsigned cauchyNumber);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
@@ -62,6 +63,15 @@ const Eigen::VectorXd& VarianceEstimator<T>::getMean() const{
   
   return mean;
 
+}
+
+template<class T>
+Eigen::MatrixXd VarianceEstimator<T>::getCorrelationMatrix() const{
+  
+  unsigned numberPositive = (var.diagonal().array() > 0).count();
+  Eigen::MatrixXd inverseErrors = var.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
+  return inverseErrors * var.topLeftCorner(numberPositive, numberPositive) * inverseErrors;
+  
 }
 
 template <class T>

@@ -22,6 +22,7 @@ public:
   const T& getVariable2() const;
   const Eigen::VectorXd& getMean1() const;
   const Eigen::VectorXd& getMean2() const;
+  Eigen::MatrixXd getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const;//you need to pass Var(X) and Var(Y) to compute Corr(X,Y)
   const Eigen::MatrixXd& getCovarianceMatrix() const;
   void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
@@ -81,6 +82,16 @@ const Eigen::VectorXd& CovarianceEstimator<T>::getMean2() const{
   
   return mean2;
 
+}
+
+template <class T>
+Eigen::MatrixXd CovarianceEstimator<T>::getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const{
+  
+  unsigned numberPositive = std::min((var1.diagonal().array() > 0).count(), (var2.diagonal().array() > 0).count());
+  Eigen::MatrixXd inverseErrors1 = var1.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
+  Eigen::MatrixXd inverseErrors2 = var2.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
+  return inverseErrors1 * var.topLeftCorner(numberPositive, numberPositive) * inverseErrors2;
+  
 }
 
 template <class T>
