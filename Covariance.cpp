@@ -11,8 +11,6 @@ namespace bpo = boost::program_options;
 
 void saveCovariance(const US& unstableState, double epsilon, unsigned cauchyNumber){
   
-  std::cout<<"Processing decay tree:\n"<<unstableState<<std::endl;
-  
   VarianceEstimator<US> varianceEstimator(unstableState);
   varianceEstimator.estimate(epsilon, cauchyNumber);
   
@@ -22,15 +20,16 @@ void saveCovariance(const US& unstableState, double epsilon, unsigned cauchyNumb
 
 void saveCovariance(const US& unstableState1, const US& unstableState2, double epsilon, unsigned cauchyNumber){
   
-  std::cout<<"Processing decay tree 1:\n"<<unstableState1<<"\nAnd decay tree 2:\n"<<unstableState2<<std::endl;
-  
   VarianceEstimator<US> varianceEstimator1(unstableState1);
   VarianceEstimator<US> varianceEstimator2(unstableState2);
   CovarianceEstimator<US> covarianceEstimator(unstableState1, unstableState2);
   
-  varianceEstimator1.estimate(epsilon, cauchyNumber);
-  varianceEstimator2.estimate(epsilon, cauchyNumber);
-  covarianceEstimator.estimate(epsilon, cauchyNumber);
+  std::thread thread1(&VarianceEstimator<US>::estimate, &varianceEstimator1, epsilon, cauchyNumber);
+  thread1.join();
+  std::thread thread2(&VarianceEstimator<US>::estimate, &varianceEstimator2, epsilon, cauchyNumber);
+  thread2.join();
+  std::thread thread3(&CovarianceEstimator<US>::estimate, &covarianceEstimator, epsilon, cauchyNumber);
+  thread3.join();
   
   std::cout<<varianceEstimator1<<"\n"<<varianceEstimator2<<"\n"<<covarianceEstimator<<std::endl;
   
