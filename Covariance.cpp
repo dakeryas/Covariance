@@ -25,17 +25,17 @@ void saveCovariance(const US& unstableState1, const US& unstableState2, double e
   CovarianceEstimator<US> covarianceEstimator(unstableState1, unstableState2);
   
   std::thread thread1(&VarianceEstimator<US>::estimate, &varianceEstimator1, epsilon, cauchyNumber);
-  thread1.join();
   std::thread thread2(&VarianceEstimator<US>::estimate, &varianceEstimator2, epsilon, cauchyNumber);
-  thread2.join();
   std::thread thread3(&CovarianceEstimator<US>::estimate, &covarianceEstimator, epsilon, cauchyNumber);
+  thread1.join();
+  thread2.join();
   thread3.join();
   
   std::cout<<varianceEstimator1<<"\n"<<varianceEstimator2<<"\n"<<covarianceEstimator<<std::endl;
   
 }
 
-void saveCovariance(const std::vector<std::string>& xmlFiles, double epsilon, unsigned cauchyNumber, bool normaliseData){
+void startCovariance(const std::vector<std::string>& xmlFiles, double epsilon, unsigned cauchyNumber, bool normaliseData){
   
   std::vector<std::unique_ptr<std::istream>> xmlStreams;//we need pointers for polymorphism (ifstream: public istream)
   for(const auto& xmlFile : xmlFiles) xmlStreams.emplace_back(new std::ifstream(xmlFile));
@@ -84,8 +84,8 @@ int main (int argc, char* argv[]){
       
       if(regularFiles){
 	
-	if(arguments.count("normalise")) saveCovariance(xmlFiles, arguments["accuracy"].as<double>(), arguments["consecutive"].as<unsigned>(), true);
-	else saveCovariance(xmlFiles, arguments["accuracy"].as<double>(), arguments["consecutive"].as<unsigned>(), false);;
+	if(arguments.count("normalise")) startCovariance(xmlFiles, arguments["accuracy"].as<double>(), arguments["consecutive"].as<unsigned>(), true);
+	else startCovariance(xmlFiles, arguments["accuracy"].as<double>(), arguments["consecutive"].as<unsigned>(), false);;
 	
       }
 	
