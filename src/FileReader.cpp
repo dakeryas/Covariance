@@ -12,12 +12,18 @@ namespace FileReader{
     
     void readAsHist(Hist& hist, TObject* obj){
 
-      if(itemMatches(obj, "TH1D")) hist = *dynamic_cast<TH1D*>(obj); //if "GetClassName" contains TH1, the function finds shouldn't return "std::string::npos"
+      if(itemMatches(obj, "TH1D")){
+	
+	hist = *dynamic_cast<TH1D*>(obj); //if "GetClassName" contains TH1, the function finds shouldn't return "std::string::npos"
+	delete obj;
+	
+      }
       else if(itemMatches(obj, "TH1F")){
 	
 	TH1D htemp;
 	dynamic_cast<TH1F*>(obj)->Copy(htemp);//copy the TH1F into a TH1D
 	hist = htemp;
+	delete obj;
 	
       }
 
@@ -37,6 +43,7 @@ namespace FileReader{
   
   Hist read(const boost::filesystem::path& filePath){
   
+    TH1::AddDirectory(false);//otherwise ROOT leads to segmentation violations
     Hist hist;
 
     if(boost::filesystem::is_regular_file(filePath)){
