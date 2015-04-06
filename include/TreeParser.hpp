@@ -61,6 +61,8 @@ std::unique_ptr<UnstableState<T>> TreeParser<T>::read(std::istream& stream, bool
   std::unique_ptr<UnstableState<T>> state(new UnstableState<T>);
   parse(tree.get_child("US"), *state, normaliseData);//fill the state
   
+  std::cout<<"Read tree:\n"<<*state<<std::endl;
+  
   return state;
   
 }
