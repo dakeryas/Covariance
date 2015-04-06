@@ -12,6 +12,7 @@ public:
   UnstableState(std::vector<State<T>*> daughters, std::vector<Ratio*> ratios);//it always takes ownership of the pointers passed
   UnstableState(std::vector<State<T>*> daughters);
   unsigned getDimensionOfRealisations() const;
+  T getTemplateRealisation() const;
   T getRealisation(std::mt19937& randomGenerator);//picks random ratios and returns the resulting spectrum
   std::unique_ptr<State<T>> clone() const;
 
@@ -32,6 +33,14 @@ unsigned UnstableState<T>::getDimensionOfRealisations() const{
 
   for(const auto& daughter : this->daughters) return daughter->getDimensionOfRealisations();
   return 0;
+  
+}
+
+template <class T>
+T UnstableState<T>::getTemplateRealisation() const{
+
+  for(const auto& daughter : this->daughters) return daughter->getTemplateRealisation();
+  return T();
   
 }
 

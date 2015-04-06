@@ -11,6 +11,7 @@ class FinalState: public State<T>{ //that is a leaf and it only needs an actual 
 public:
   FinalState(const T& spectrum);
   unsigned getDimensionOfRealisations() const;
+  T getTemplateRealisation() const;
   T getRealisation(std::mt19937&);//returns the resulting spectrum which does not require a random generator
   void setSpectrum(const T& spectrum);
   std::unique_ptr<State<T>> clone() const;
@@ -27,6 +28,13 @@ unsigned FinalState<T>::getDimensionOfRealisations() const{
   
   return spectrum.getDimension();
 
+}
+
+template <class T>
+T FinalState<T>::getTemplateRealisation() const{
+
+  return spectrum;
+  
 }
 
 template <class T>

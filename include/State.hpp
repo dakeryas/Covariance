@@ -22,6 +22,7 @@ public:
   State<T>& operator=(State<T>&& other) = default;
   virtual ~State()= default;//to allow for proper destruction of the derived classes
   virtual unsigned getDimensionOfRealisations() const = 0;//returns the dimension of the first found data stored in the daughters
+  virtual T getTemplateRealisation() const = 0;//returns any realisation of T
   virtual T getRealisation(std::mt19937& randomGenerator) = 0;//picks random ratios and returns the resulting spectrum or returns the spectrum for a leaf
   const std::vector<std::unique_ptr<State<T>>>& getDaughters() const;
   std::vector<std::unique_ptr<State<T>>>& getDaughters();//returns assignable reference to the daughters
