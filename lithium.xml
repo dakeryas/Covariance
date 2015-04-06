@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <database path= "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_gaus/Gd/Output"/>
+  <database path = "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_gaus/Gd/Output"/>
+  <normalise true ="1"/>
   <US>
     <US ratio = "0.297" error = "0.03">
       <FS datafile = "li_243_8Be_gaus.root"/>
