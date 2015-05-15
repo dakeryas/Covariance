@@ -4,7 +4,7 @@
 #include "ConvergenceTester.hpp"
 
 template<class T>
-class CovarianceEstimator{ 
+class CovarianceEstimator{
   
   std::mt19937 randomGenerator1, randomGenerator2;//random generators used to get random values for variable1 and variable2, both are initialised with the same random seed
   unsigned n;//number of iterations for the process (when with a sample, n =1)
@@ -17,14 +17,15 @@ class CovarianceEstimator{
   
 public:
   CovarianceEstimator(const T& variable1, const T& variable2);//the variables need to implement a getRealisation() method
+  virtual ~CovarianceEstimator() = default;
   unsigned getNumberOfIterations() const;
   const T& getVariable1() const;
   const T& getVariable2() const;
   const Eigen::VectorXd& getMean1() const;
   const Eigen::VectorXd& getMean2() const;
-  Eigen::MatrixXd getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const;//you need to pass Var(X) and Var(Y) to compute Corr(X,Y)
+  virtual Eigen::MatrixXd getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const;//you need to pass Var(X) and Var(Y) to compute Corr(X,Y)
   const Eigen::MatrixXd& getCovarianceMatrix() const;
-  void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
+  virtual void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
 
 };
 
