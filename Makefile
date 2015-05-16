@@ -9,7 +9,7 @@ FLAGS := $(shell root-config --cflags)
 FLAGS += -I. -I$(IDIR)
 FLAGS += -I$(APPLICATIONS_PATH)
 FLAGS += -I$(BOOST_PATH)
-OPTFLAG = $(FLAGS) -Wall -Wextra -O3
+OPTFLAG = $(FLAGS) -Wall -Wextra -O3 -MMD -MP
 
 LIBS :=  $(shell root-config --libs)
 LIBS += -lrt
@@ -17,6 +17,8 @@ LIBS += -L$(BOOST_PATH)/build/lib -lboost_filesystem -lboost_system -lboost_prog
 
 OBJS = $(patsubst %.cpp,%.o,$(addprefix $(ODIR)/,$(wildcard *.cpp)))
 OBJS += $(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(wildcard $(SDIR)/*.cpp))
+
+DEPS = $(patsubst %.o,%.d, $(OBJS))
 
 .PHONY: clean
 
@@ -37,8 +39,9 @@ $(ODIR)/%.o:$(SDIR)/%.cpp $(IDIR)/%.hpp
 
 
 $(EXECUTABLE): $(OBJS)
-	$(CXX) $(OPTFLAG) -o $@  $^ $(LIBS)
+	$(CXX) -o $@  $^ $(LIBS)
 
 clean:
-	rm -f $(ODIR)/*.o $(SDIR)/*~ $(IDIR)/*~ $(EXECUTABLE) *.txt *.root *~
+	rm -f $(ODIR)/*.o $(DEPS) $(SDIR)/*~ $(IDIR)/*~ $(EXECUTABLE) *.txt *.root *~
 
+-include $(DEPS)
