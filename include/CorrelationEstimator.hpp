@@ -21,17 +21,6 @@ public:
 };
 
 template <class T>
-std::ostream& operator<<(std::ostream& output, const CorrelationEstimator<T>& correlationEstimator){
-  
-  output<<"Number of iterations = "<<correlationEstimator.getNumberOfIterations()<<"\n"
-    <<"Covariance Matrix = "<<"\n"<<correlationEstimator.getCovarianceMatrix()<<"\n"
-    <<"Mean1 = "<<"\n"<<correlationEstimator.getMean1()<<"\n"
-    <<"Mean2 = "<<"\n"<<correlationEstimator.getMean2()<<"\n";
-  return output;
-  
-}
-
-template <class T>
 CorrelationEstimator<T>::CorrelationEstimator(const T& variable1, const T& variable2):CovarianceEstimator<T>(variable1, variable2),varianceEstimator1(variable1),varianceEstimator2(variable2){
   
 }

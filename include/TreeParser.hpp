@@ -17,7 +17,7 @@ class TreeParser{ //class to parse xml files containing decay trees and build an
   
 public:
   TreeParser()= default;
-  std::unique_ptr<UnstableState<T>> read(std::istream& stream);//read the tree defined in "stream" and normalise the data found if demanded
+  std::unique_ptr<UnstableState<T>> read(std::istream& stream, unsigned verbose = 2);//read the tree defined in "stream" and normalise the data found if demanded
   
 };
 
@@ -50,24 +50,24 @@ void TreeParser<T>::parse(const boost::property_tree::ptree& tree, State<T>& sta
 }
 
 template <class T>
-std::unique_ptr<UnstableState<T>> TreeParser<T>::read(std::istream& stream){
+std::unique_ptr<UnstableState<T>> TreeParser<T>::read(std::istream& stream, unsigned verbose){
   
   boost::property_tree::ptree tree;
   boost::property_tree::read_xml(stream, tree);
   
   tree = tree.get_child("configuration");//enter the actual tree
   databasePath = tree.get_child("database").get<boost::filesystem::path>("<xmlattr>.path");//fill the databasePath
-  std::cout<<"Using database: "<<databasePath<<std::endl;
+  if(verbose > 0) std::cout<<"Using database: "<<databasePath<<std::endl;
   
   auto normaliseChild = tree.get_child_optional("normalise");
   if(normaliseChild) normaliseData = normaliseChild->get<bool>("<xmlattr>.true");
   else normaliseData = false;
-  std::cout<<"Normalise the data read: "<<std::boolalpha<<normaliseData<< std::endl;
+  if(verbose > 0) std::cout<<"Normalise the data read: "<<std::boolalpha<<normaliseData<< std::endl;
   
   std::unique_ptr<UnstableState<T>> state(new UnstableState<T>);
   parse(tree.get_child("US"), *state);//fill the state
   
-  std::cout<<"Read tree:\n"<<*state<<std::endl;
+  if(verbose  > 1) std::cout<<"Read tree:\n"<<*state<<std::endl;
   
   return state;
   
