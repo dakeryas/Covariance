@@ -22,7 +22,8 @@ public:
   Eigen::MatrixXd getCorrelationMatrix() const;
   const Eigen::MatrixXd& getCovarianceMatrix() const;
   void estimate(double epsilon, unsigned cauchyNumber);//relative accuracy needed between the close matrices, number of close consecutive matrices needed
-
+  void addSlopeMatrix(double slope);//add to 'var' a 'sigma * sigma.transpose()' matrix where 'sigma(i) = slope * mean(i) * (i+.5)'
+  
 };
 
 template <class T>
@@ -111,6 +112,15 @@ void VarianceEstimator<T>::estimate(double epsilon, unsigned cauchyNumber){
 
   }
   
+}
+
+template <class T>
+void VarianceEstimator<T>::addSlopeMatrix(double slope){
+  
+  Eigen::VectorXd sigma(mean.size());
+  for(unsigned k = 0; k < sigma.size(); ++k) sigma(k) = slope * mean(k) * (k + .5);
+  var += sigma * sigma.transpose();
+
 }
 
 #endif

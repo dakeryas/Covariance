@@ -17,7 +17,8 @@ public:
   const VarianceEstimator<T>& getVarianceEstimator1() const;//for Var(X)
   const VarianceEstimator<T>& getVarianceEstimator2() const;//for Var(Y)
   void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
-
+  void addSlopeMatrix(double slope);
+  
 };
 
 template <class T>
@@ -54,6 +55,15 @@ void CorrelationEstimator<T>::estimate(double epsilon, unsigned cauchyNumber){
   CovarianceEstimator<T>::estimate(epsilon, cauchyNumber);
   thread1.join();
   thread2.join();
+  
+}
+
+template <class T>
+void CorrelationEstimator<T>::addSlopeMatrix(double slope){
+
+  varianceEstimator1.addSlopeMatrix(slope);
+  varianceEstimator2.addSlopeMatrix(slope);
+  CovarianceEstimator<T>::addSlopeMatrix(slope);
   
 }
 

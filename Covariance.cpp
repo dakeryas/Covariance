@@ -25,7 +25,7 @@ CorrelationEstimator<US> getCorrelation(const US& unstableState1, const US& unst
   
 }
 
-void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, unsigned verbose){
+void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, unsigned verbose, double slope){
   
   std::vector<std::unique_ptr<std::istream>> xmlStreams;//we need pointers for polymorphism (ifstream: public istream)
   for(const auto& xmlFile : xmlFiles) xmlStreams.emplace_back(new std::ifstream(xmlFile));
@@ -37,6 +37,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
   if(unstableStates.size() == 1){
     
     auto varianceEstimator = getVariance(*unstableStates.front(), epsilon, cauchyNumber);
+    if(slope > 0) varianceEstimator.addSlopeMatrix(slope);
     if(verbose > 2) std::cout<<varianceEstimator<<std::endl;
     
     TMatrixD covarianceMatrix(varianceEstimator.getCovarianceMatrix().rows(), varianceEstimator.getCovarianceMatrix().cols(), varianceEstimator.getCovarianceMatrix().data());
@@ -55,6 +56,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
   else if(unstableStates.size() == 2){
     
     auto correlationEstimator = getCorrelation(*unstableStates.front(), *unstableStates.back(), epsilon, cauchyNumber);
+    if(slope > 0) correlationEstimator.addSlopeMatrix(slope);
     if(verbose > 2) std::cout<<correlationEstimator<<std::endl;
     
     auto var1 = correlationEstimator.getVarianceEstimator1().getCovarianceMatrix();
@@ -89,6 +91,8 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
     
   }
   
+  if(verbose > 0) std::cout<<"Results successfully saved in: \""<<outFileName<<"\"\n";
+  
 }
 
 int main (int argc, char* argv[]){
@@ -100,6 +104,7 @@ int main (int argc, char* argv[]){
   ("output,o", bpo::value<std::string>(), "Output file where to save the covariance matrices")
   ("accuracy,a", bpo::value<double>()->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
   ("consecutive,c", bpo::value<unsigned>()->default_value(3),"Number of close consecutive matrices demanded")
+  ("slope,s", bpo::value<double>()->default_value(0) ,"Add a correlated slope matrix to the results")
   ("verbose,v", bpo::value<unsigned>()->default_value(2),"Display parsing at 1, complete parsing at 2, and display all results at 3");
 
   bpo::positional_options_description positionalOptions;//to use arguments without "--"
@@ -127,7 +132,7 @@ int main (int argc, char* argv[]){
 	    
 	}
 	
-	if(regularFiles) saveCovariance(xmlFiles, arguments["output"].as<std::string>(), arguments["accuracy"].as<double>(), arguments["consecutive"].as<unsigned>(), arguments["verbose"].as<unsigned>());
+	if(regularFiles) saveCovariance(xmlFiles,arguments["output"].as<std::string>(),arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
 	  
       }
       
