@@ -1,98 +1,146 @@
-#include "spectrum.hpp"
-#include "ConvergenceTester.hpp"
-#include "SampleSlope.hpp"
+#include "boost/program_options.hpp"
+#include "TMatrixD.h"
+#include "TreeParser.hpp"
+#include "VarianceEstimator.hpp"
+#include "CorrelationEstimator.hpp"
+#include "GaussianRatio.hpp"
 
-void CovarianceLi(const path& database, const char* outname, const double epsilon = 1e-5, const double magnetism_error = 0.01){
+using US = UnstableState<Hist>;
+using FS = FinalState<Hist>;
+namespace bpo = boost::program_options;
+
+VarianceEstimator<US> getVariance(const US& unstableState, double epsilon, unsigned cauchyNumber){
   
-  const vector<double> rbLi = {0.297, 0.158, 0.015, 0.011, 0.027};
-  const vector<double> rbLi_e = {0.03, 0.03 , 0.005, 0.003, 0.002};
-  const vector<double> r_1181 = {0.47, 0.28, 0.12, 0.11, 0.02, 0.01};
-  const vector<double> r_1181_e = {0.07, 0.06, 0.08, 0.06, 0.01, 0.01};//need to match the ordering of std::sort on boost::path
-  
-  const vector<double> rebin_edges = {0, 14};
-  const vector<double> rebin_widths = {0.1};
-   
-  spectrum spe_243(database, "_243_");
-  spectrum spe_278(database, "_278_");
-  spectrum spe_794(database, "_794_");
-  spectrum spe_1128(database, "_1128_");
-  spectrum spe_1181(database, "_1181_", r_1181, true, r_1181_e);//the errors will be set to zero by default
-  
-  const vector<spectrum*> branches ({&spe_243, &spe_278, &spe_794, &spe_1128, &spe_1181});
-  spectrum spe_tot(branches, rbLi, true, rbLi_e);
-  
-  Sample lithium(spe_tot.GetResultingSpectrum());
-  ConvergenceTester tester(epsilon);//create a convergence tester at three levels first
-  
-  while (!tester.converges()){
-    
-    spe_243.NewEvent();
-    spe_278.NewEvent();
-    spe_794.NewEvent();
-    spe_1128.NewEvent();
-    spe_1181.NewEvent();
-    spe_tot.UpdateFromSpectra(branches);
-    
-    lithium.Update(spe_tot.GetResultingSpectrum());
-    tester.feed(lithium);
-    
-  }
-  
-  SampleSlope magnetism(lithium.GetMeanSpectrum(rebin_edges.front(), rebin_edges.back()), magnetism_error);//apply an error whose energy dependency is 'magnetism_error' times the BinCenter(k) to the bin contents of the mean lithium spectrum
-  cout<<magnetism;
-  
-  lithium += magnetism;
-  cout<<lithium;
-  lithium.SaveToRoot(outname, rebin_edges, rebin_widths);//save the mean_spectrum and the var matrix, use the  edges and the widths specified to create a bining for the mean_spectrum
+  VarianceEstimator<US> varianceEstimator(unstableState);
+  varianceEstimator.estimate(epsilon, cauchyNumber);
+  return varianceEstimator;
   
 }
 
-void CovarianceHe(const path& database, const char* outname, const double epsilon = 1e-5, const double magnetism_error = 0.01){
+CorrelationEstimator<US> getCorrelation(const US& unstableState1, const US& unstableState2, double epsilon, unsigned cauchyNumber){
   
-  const vector<double> rbHe = {0.08, 0.08, 0.009};
-  const vector<double> rbHe_e = {0.04, 0.04, 0.001};
+  CorrelationEstimator<US> correlationEstimator(unstableState1, unstableState2);
+  correlationEstimator.estimate(epsilon, cauchyNumber);
+  return correlationEstimator;
   
-  const vector<double> rebin_edges = {0, 14};
-  const vector<double> rebin_widths = {0.1};
-  
-  spectrum spe_321(database, "_321_");
-  spectrum spe_54(database, "_54_");
-  spectrum spe_967(database, "_967_");
+}
 
-  const vector<spectrum*> branches ({&spe_321, &spe_54, &spe_967});
-  spectrum spe_tot(branches, rbHe, true, rbHe_e);
+void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, unsigned verbose, double slope){
   
-  Sample helium(spe_tot.GetResultingSpectrum());
-  ConvergenceTester tester(epsilon);
+  std::vector<std::unique_ptr<std::istream>> xmlStreams;//we need pointers for polymorphism (ifstream: public istream)
+  for(const auto& xmlFile : xmlFiles) xmlStreams.emplace_back(new std::ifstream(xmlFile));
   
-  while (!tester.converges()){
+  TreeParser<Hist> treeParser;//the  data files to parse point to "Hist" 's
+  std::vector<std::unique_ptr<US>> unstableStates;
+  for(const auto& xmlStream : xmlStreams) unstableStates.emplace_back(treeParser.read(*xmlStream, verbose));//parse the xml files
+  
+  if(unstableStates.size() == 1){
     
-    spe_321.NewEvent();
-    spe_54.NewEvent();
-    spe_967.NewEvent();
-    spe_tot.UpdateFromSpectra(branches);
+    auto varianceEstimator = getVariance(*unstableStates.front(), epsilon, cauchyNumber);
+    if(slope > 0) varianceEstimator.addSlopeMatrix(slope);
+    if(verbose > 2) std::cout<<varianceEstimator<<std::endl;
     
-    helium.Update(spe_tot.GetResultingSpectrum());
-    tester.feed(helium);
+    TMatrixD covarianceMatrix(varianceEstimator.getCovarianceMatrix().rows(), varianceEstimator.getCovarianceMatrix().cols(), varianceEstimator.getCovarianceMatrix().data());
+    auto corr = varianceEstimator.getCorrelationMatrix();
+    TMatrixD correlationMatrix(corr.rows(), corr.cols(), corr.data());
+    auto mean = unstableStates.front()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean.setBinContents(varianceEstimator.getMean());
+    mean.setErrorsFrom(varianceEstimator.getCovarianceMatrix());
+    
+    TFile outfile(outFileName.c_str(), "recreate");
+    mean.Write();
+    covarianceMatrix.Write("Cov");
+    correlationMatrix.Write("Corr");
+    
+  }
+  else if(unstableStates.size() == 2){
+    
+    auto correlationEstimator = getCorrelation(*unstableStates.front(), *unstableStates.back(), epsilon, cauchyNumber);
+    if(slope > 0) correlationEstimator.addSlopeMatrix(slope);
+    if(verbose > 2) std::cout<<correlationEstimator<<std::endl;
+    
+    auto var1 = correlationEstimator.getVarianceEstimator1().getCovarianceMatrix();
+    TMatrixD covarianceMatrix1(var1.rows(), var1.cols(), var1.data());
+    auto corr1 = correlationEstimator.getVarianceEstimator1().getCorrelationMatrix();
+    TMatrixD correlationMatrix1(corr1.rows(), corr1.cols(), corr1.data());
+    auto mean1 = unstableStates.front()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean1.setBinContents(correlationEstimator.getMean1());
+    mean1.setErrorsFrom(var1);
+
+    auto var2 = correlationEstimator.getVarianceEstimator2().getCovarianceMatrix();
+    TMatrixD covarianceMatrix2(var2.rows(), var2.cols(), var2.data());
+    auto corr2 = correlationEstimator.getVarianceEstimator2().getCorrelationMatrix();
+    TMatrixD correlationMatrix2(corr2.rows(), corr2.cols(), corr2.data());
+    auto mean2 = unstableStates.back()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean2.setBinContents(correlationEstimator.getMean2());
+    mean2.setErrorsFrom(var2);
+
+    TMatrixD covarianceMatrix12(correlationEstimator.getCovarianceMatrix().rows(), correlationEstimator.getCovarianceMatrix().cols(), correlationEstimator.getCovarianceMatrix().transpose().data());
+    auto corr12 = correlationEstimator.getCorrelationMatrix().transpose();
+    TMatrixD correlationMatrix12(corr12.rows(), corr12.cols(), corr12.data());
+
+    TFile outfile(outFileName.c_str(), "recreate");
+    mean1.Write("Mean1");
+    mean2.Write("Mean2");
+    covarianceMatrix1.Write("Cov1");
+    covarianceMatrix2.Write("Cov2");
+    correlationMatrix1.Write("Corr1");
+    correlationMatrix2.Write("Corr2");
+    covarianceMatrix12.Write("Cov12");
+    correlationMatrix12.Write("Corr12");
     
   }
   
-  SampleSlope magnetism(helium.GetMeanSpectrum(rebin_edges.front(), rebin_edges.back()), magnetism_error);//apply an error whose energy dependency is 'magnetism_error' times the BinCenter(k) to the bin contents of the mean helium spectrum
-  cout<<magnetism;
+  if(verbose > 0) std::cout<<"Results successfully saved in: \""<<outFileName<<"\"\n";
   
-  helium += magnetism;
-  cout<<helium;
-  helium.SaveToRoot(outname, rebin_edges, rebin_widths);//save the mean_spectrum and the var matrix, use the  edges and the widths specified to create a bining for the mean_spectrum
- 
 }
 
 int main (int argc, char* argv[]){
   
-  if (argc == 2 && is_directory(path (argv[1]))) CovarianceLi(path(argv[1]), "correlation.root");
-  else if (argc == 3 && is_directory(path (argv[1]))) CovarianceLi(path(argv[1]), argv[2]);
-  else if(argc == 4 && is_directory(path (argv[1]))) CovarianceLi(path(argv[1]), argv[2], stod(argv[3]));
-  else if(argc == 5 && is_directory(path (argv[1]))) CovarianceLi(path(argv[1]), argv[2], stod(argv[3]), stod(argv[4]));
-  else cout<<"You must provide the path to the folder where the  events are stored and an outfile name to store the mean spectrum"<<endl;
+  bpo::options_description optionDescription("Covariance Tool usage");
+  optionDescription.add_options()
+  ("help,h", "Display this help message")
+  ("tree,t", bpo::value<std::vector<std::string>>(), "Decay trees to process in the form of XML files (1 or 2 files)")
+  ("output,o", bpo::value<std::string>(), "Output file where to save the covariance matrices")
+  ("accuracy,a", bpo::value<double>()->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
+  ("consecutive,c", bpo::value<unsigned>()->default_value(3),"Number of close consecutive matrices demanded")
+  ("slope,s", bpo::value<double>()->default_value(0) ,"Add a correlated slope matrix to the results")
+  ("verbose,v", bpo::value<unsigned>()->default_value(2),"Display parsing at 1, complete parsing at 2, and display all results at 3");
+
+  bpo::positional_options_description positionalOptions;//to use arguments without "--"
+  positionalOptions.add("tree", -1);
+  
+  bpo::variables_map arguments;
+  bpo::store(bpo::command_line_parser(argc, argv).options(optionDescription).positional(positionalOptions).run(), arguments);
+  bpo::notify(arguments);//the arguments are ready to be used
+  
+  if(arguments.count("help")) std::cout<<optionDescription<<std::endl;
+  else if(arguments.count("tree")){
+    
+    if(arguments.count("output")){
+      
+      std::vector<std::string> xmlFiles = arguments["tree"].as<std::vector<std::string>>();
+      
+      if(xmlFiles.size() != 1 && xmlFiles.size() != 2) std::cout<<"Error : wrong number of input files (1 or 2 needed)"<<std::endl;
+      else{
+	
+	bool regularFiles = true;
+	for (const auto& file : xmlFiles) if(!boost::filesystem::is_regular_file(file)){
+	  
+	    std::cout<<"Error: '"<<file<<"' is not a regular file"<<std::endl;
+	    regularFiles = false;
+	    
+	}
+	
+	if(regularFiles) saveCovariance(xmlFiles,arguments["output"].as<std::string>(),arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
+	  
+      }
+      
+    }
+    else std::cout<<"Output file missing (see help)"<<std::endl;
+    
+  }
+  else std::cout<<"No trees to process were passed (see help)"<<std::endl;
   
   return 0;
   

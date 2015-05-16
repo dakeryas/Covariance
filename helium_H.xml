@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <database path= "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Helium_gaus/Hydrogen/Output"/>
+  <normalise true = "1"/>
+  <US>
+    <US ratio = "8" error = "4">
+      <FS datafile = "he_321_7Li_gaus.root"/>
+      <FS datafile = "he_321_7Li048_gaus.root"/>
+    </US>
+    <US ratio = "8" error = "4">
+      <FS datafile = "he_54_7Li_gaus.root"/>
+      <FS datafile = "he_54_7Li048_gaus.root"/>
+      <FS datafile = "he_54_atn_gaus.root"/>
+    </US>
+    <US ratio = "0.9" error = "0.1">
+      <FS datafile = "he_967_7Li_gaus.root"/>
+      <FS datafile = "he_967_7Li048_gaus.root"/>
+      <FS datafile = "he_967_atn_gaus.root"/>
+      <FS datafile = "he_967_5He_gaus.root"/>
+    </US>
+  </US>
+</configuration>
+
