@@ -117,32 +117,35 @@ int main (int argc, char* argv[]){
   try{
     
     bpo::store(bpo::command_line_parser(argc, argv).options(optionDescription).positional(positionalOptions).run(), arguments);
-    bpo::notify(arguments);//the arguments are ready to be used
     
-    if(arguments.count("help")) std::cout<<optionDescription<<std::endl;
-    else{
-	
-      if(xmlFiles.size() != 1 && xmlFiles.size() != 2) std::cout<<"Error : wrong number of input files (1 or 2 needed)"<<std::endl;
-      else{
-	
-	bool regularFiles = true;
-	for (const auto& file : xmlFiles) if(!boost::filesystem::is_regular_file(file)){
-	  
-	  std::cout<<"Error: '"<<file<<"' is not a regular file"<<std::endl;
-	  regularFiles = false;
-	  
-	}
-	
-	if(regularFiles) saveCovariance(xmlFiles, output,arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
-	
-      }
+    if(arguments.count("help")){
+      
+      std::cout<<optionDescription<<std::endl;
+      return 0;
       
     }
+      
+    bpo::notify(arguments);//the arguments are ready to be used
     
   }
   catch(bpo::error& e){
     
     std::cout<<e.what()<<std::endl;
+    return 1;
+    
+  }
+
+  if(xmlFiles.size() != 1 && xmlFiles.size() != 2) std::cout<<"Error : wrong number of input files (1 or 2 needed)"<<std::endl;
+  else{
+    
+    for (const auto& file : xmlFiles) if(!boost::filesystem::is_regular_file(file)){
+      
+      std::cout<<"Error: '"<<file<<"' is not a regular file"<<std::endl;
+      return 1;
+      
+    }
+    
+    saveCovariance(xmlFiles, output,arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
     
   }
   
