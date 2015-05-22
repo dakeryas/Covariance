@@ -97,11 +97,14 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
 
 int main (int argc, char* argv[]){
   
+  std::vector<std::string> xmlFiles;
+  std::string output;
+  
   bpo::options_description optionDescription("Covariance Tool usage");
   optionDescription.add_options()
   ("help,h", "Display this help message")
-  ("tree,t", bpo::value<std::vector<std::string>>(), "Decay trees to process in the form of XML files (1 or 2 files)")
-  ("output,o", bpo::value<std::string>(), "Output file where to save the covariance matrices")
+  ("tree,t", bpo::value<std::vector<std::string>>(&xmlFiles)->required(), "Decay trees to process in the form of XML files (1 or 2 files)")
+  ("output,o", bpo::value<std::string>(&output)->required(), "Output file where to save the covariance matrices")
   ("accuracy,a", bpo::value<double>()->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
   ("consecutive,c", bpo::value<unsigned>()->default_value(3),"Number of close consecutive matrices demanded")
   ("slope,s", bpo::value<double>()->default_value(0) ,"Add a correlated slope matrix to the results")
@@ -111,36 +114,37 @@ int main (int argc, char* argv[]){
   positionalOptions.add("tree", -1);
   
   bpo::variables_map arguments;
-  bpo::store(bpo::command_line_parser(argc, argv).options(optionDescription).positional(positionalOptions).run(), arguments);
-  bpo::notify(arguments);//the arguments are ready to be used
-  
-  if(arguments.count("help")) std::cout<<optionDescription<<std::endl;
-  else if(arguments.count("tree")){
+  try{
     
-    if(arguments.count("output")){
-      
-      std::vector<std::string> xmlFiles = arguments["tree"].as<std::vector<std::string>>();
-      
+    bpo::store(bpo::command_line_parser(argc, argv).options(optionDescription).positional(positionalOptions).run(), arguments);
+    bpo::notify(arguments);//the arguments are ready to be used
+    
+    if(arguments.count("help")) std::cout<<optionDescription<<std::endl;
+    else{
+	
       if(xmlFiles.size() != 1 && xmlFiles.size() != 2) std::cout<<"Error : wrong number of input files (1 or 2 needed)"<<std::endl;
       else{
 	
 	bool regularFiles = true;
 	for (const auto& file : xmlFiles) if(!boost::filesystem::is_regular_file(file)){
 	  
-	    std::cout<<"Error: '"<<file<<"' is not a regular file"<<std::endl;
-	    regularFiles = false;
-	    
+	  std::cout<<"Error: '"<<file<<"' is not a regular file"<<std::endl;
+	  regularFiles = false;
+	  
 	}
 	
-	if(regularFiles) saveCovariance(xmlFiles,arguments["output"].as<std::string>(),arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
-	  
+	if(regularFiles) saveCovariance(xmlFiles, output,arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
+	
       }
       
     }
-    else std::cout<<"Output file missing (see help)"<<std::endl;
     
   }
-  else std::cout<<"No trees to process were passed (see help)"<<std::endl;
+  catch(bpo::error& e){
+    
+    std::cout<<e.what()<<std::endl;
+    
+  }
   
   return 0;
   
