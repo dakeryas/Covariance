@@ -32,7 +32,17 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
   
   TreeParser<Hist> treeParser;//the  data files to parse point to "Hist" 's
   std::vector<std::unique_ptr<US>> unstableStates;
-  for(const auto& xmlStream : xmlStreams) unstableStates.emplace_back(treeParser.read(*xmlStream, verbose));//parse the xml files
+  try{
+    
+    for(const auto& xmlStream : xmlStreams) unstableStates.emplace_back(treeParser.read(*xmlStream, verbose));//parse the xml files
+    
+  }
+  catch(std::runtime_error& e){
+    
+    std::cout<<e.what()<<std::endl;
+    return ;
+    
+  }
   
   if(unstableStates.size() == 1){
     

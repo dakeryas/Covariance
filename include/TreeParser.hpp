@@ -57,6 +57,7 @@ std::unique_ptr<UnstableState<T>> TreeParser<T>::read(std::istream& stream, unsi
   
   tree = tree.get_child("configuration");//enter the actual tree
   databasePath = tree.get_child("database").get<boost::filesystem::path>("<xmlattr>.path");//fill the databasePath
+  if(!boost::filesystem::is_directory(databasePath)) throw std::runtime_error("Error: \""+databasePath.string()+"\" is not a directory");
   if(verbose > 0) std::cout<<"Using database: "<<databasePath<<std::endl;
   
   auto normaliseChild = tree.get_child_optional("normalise");

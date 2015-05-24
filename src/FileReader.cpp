@@ -42,12 +42,11 @@ namespace FileReader{
   }
   
   Hist read(const boost::filesystem::path& filePath){
-  
-    TH1::AddDirectory(false);//otherwise ROOT leads to segmentation violations
-    Hist hist;
 
     if(boost::filesystem::is_regular_file(filePath)){
       
+      TH1::AddDirectory(false);//otherwise ROOT leads to segmentation violations
+      Hist hist;
       TFile file(filePath.string().c_str());
       
       TKey* currentKey; //to point to the 'items' in a root file
@@ -62,10 +61,10 @@ namespace FileReader{
 	
       };
       
+      return hist;
+      
     }
-    else std::cout<<filePath.string()<<" is not a regular file\n";
-    
-    return hist;
+    throw std::runtime_error("Error: \""+filePath.string()+"\" is not a regular file");
 
   }
   
