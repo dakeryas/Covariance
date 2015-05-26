@@ -58,7 +58,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
     mean.setErrorsFrom(varianceEstimator.getCovarianceMatrix());
     
     TFile outfile(outFileName.c_str(), "recreate");
-    mean.Write();
+    mean.Write("Mean");
     covarianceMatrix.Write("Cov");
     correlationMatrix.Write("Corr");
     
