@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <database path= "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Helium_gaus/Gd/Output"/>
+  <database path= "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Helium_scale/Gd/Output"/>
   <normalise true = "1"/>
   <US>
     <US ratio = "8" error = "4">

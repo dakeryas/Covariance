@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <database path = "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_gaus/Hydrogen/Output"/>
+  <database path = "/home/vsibille/Documents/dchooz/cosmogenic/Simulations/Lithium_scale/Hydrogen/Output"/>
   <normalise true ="1"/>
   <US>
     <US ratio = "0.297" error = "0.03">

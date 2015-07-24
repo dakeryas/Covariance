@@ -26,7 +26,7 @@ CorrelationEstimator<US> getCorrelation(const US& unstableState1, const US& unst
 }
 
 void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, unsigned verbose, double slope){
-  
+ 
   std::vector<std::unique_ptr<std::istream>> xmlStreams;//we need pointers for polymorphism (ifstream: public istream)
   for(const auto& xmlFile : xmlFiles) xmlStreams.emplace_back(new std::ifstream(xmlFile));
   
