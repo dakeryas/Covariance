@@ -23,7 +23,7 @@ public:
   const T& getVariable2() const;
   const Eigen::VectorXd& getMean1() const;
   const Eigen::VectorXd& getMean2() const;
-  virtual Eigen::MatrixXd getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const;//you need to pass Var(X) and Var(Y) to compute Corr(X,Y)
+  Eigen::MatrixXd getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const;//you need to pass Var(X) and Var(Y) to compute Corr(X,Y)
   const Eigen::MatrixXd& getCovarianceMatrix() const;
   virtual void estimate(double epsilon, unsigned cauchyNumber);//Mersenne-Twister generator to get the realisations, relative accuracy needed between the close matrices, number of close consecutive matrices needed
   virtual void addSlopeMatrix(double slope);//add to 'var' a matrix of coefficients 'slopeMatrix(i,j) = slope² * mean(i) * (i+.5) * mean(j) * (j+.5)'
