@@ -1,5 +1,6 @@
 #include "boost/program_options.hpp"
 #include "TMatrixD.h"
+#include "ElapsedTime.hpp"
 #include "TreeParser.hpp"
 #include "VarianceEstimator.hpp"
 #include "CorrelationEstimator.hpp"
@@ -25,7 +26,7 @@ CorrelationEstimator<US> getCorrelation(const US& unstableState1, const US& unst
   
 }
 
-void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, unsigned verbose, double slope){
+void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string& outFileName, double epsilon, unsigned cauchyNumber, double slope, unsigned verbose){
  
   std::vector<std::unique_ptr<std::istream>> xmlStreams;//we need pointers for polymorphism (ifstream: public istream)
   for(const auto& xmlFile : xmlFiles) xmlStreams.emplace_back(new std::ifstream(xmlFile));
@@ -107,18 +108,24 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
 
 int main (int argc, char* argv[]){
   
+  ElapsedTime realTime;//retrieves the starting time
+  
   std::vector<std::string> xmlFiles;
   std::string output;
+  double epsilon;
+  unsigned cauchyNumber;
+  double slope;
+  unsigned verbose;
   
   bpo::options_description optionDescription("Covariance Tool usage");
   optionDescription.add_options()
   ("help,h", "Display this help message")
   ("tree,t", bpo::value<std::vector<std::string>>(&xmlFiles)->required(), "Decay trees to process in the form of XML files (1 or 2 files)")
   ("output,o", bpo::value<std::string>(&output)->required(), "Output file where to save the covariance matrices")
-  ("accuracy,a", bpo::value<double>()->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
-  ("consecutive,c", bpo::value<unsigned>()->default_value(3),"Number of close consecutive matrices demanded")
-  ("slope,s", bpo::value<double>()->default_value(0) ,"Add a correlated slope matrix to the results")
-  ("verbose,v", bpo::value<unsigned>()->default_value(2),"Display parsing at 1, complete parsing at 2, and display all results at 3");
+  ("accuracy,a", bpo::value<double>(&epsilon)->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
+  ("consecutive,c", bpo::value<unsigned>(&cauchyNumber)->default_value(3),"Number of close consecutive matrices demanded")
+  ("slope,s", bpo::value<double>(&slope)->default_value(0) ,"Add a correlated slope matrix to the results")
+  ("verbose,v", bpo::value<unsigned>(&verbose)->default_value(2),"Display parsing at 1, complete parsing at 2, and display all results at 3");
 
   bpo::positional_options_description positionalOptions;//to use arguments without "--"
   positionalOptions.add("tree", -1);
@@ -155,9 +162,11 @@ int main (int argc, char* argv[]){
       
     }
     
-    saveCovariance(xmlFiles, output,arguments["accuracy"].as<double>(),arguments["consecutive"].as<unsigned>(),arguments["verbose"].as<unsigned>(),arguments["slope"].as<double>());
+    saveCovariance(xmlFiles, output, epsilon, cauchyNumber, slope, verbose);
     
   }
+  
+  if(verbose) std::cout<<"Real time: "<<realTime<<std::endl;//calls realtime.getValue<milliseconds>()
   
   return 0;
   
