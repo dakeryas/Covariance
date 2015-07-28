@@ -55,6 +55,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
     auto corr = varianceEstimator.getCorrelationMatrix();
     TMatrixD correlationMatrix(corr.rows(), corr.cols(), corr.data());
     auto mean = unstableStates.front()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean.SetTitle("Mean");
     mean.setBinContents(varianceEstimator.getMean());
     mean.setErrorsFrom(varianceEstimator.getCovarianceMatrix());
     
@@ -75,6 +76,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
     auto corr1 = correlationEstimator.getVarianceEstimator1().getCorrelationMatrix();
     TMatrixD correlationMatrix1(corr1.rows(), corr1.cols(), corr1.data());
     auto mean1 = unstableStates.front()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean1.SetTitle("Mean1");
     mean1.setBinContents(correlationEstimator.getMean1());
     mean1.setErrorsFrom(var1);
 
@@ -83,6 +85,7 @@ void saveCovariance(const std::vector<std::string>& xmlFiles, const std::string&
     auto corr2 = correlationEstimator.getVarianceEstimator2().getCorrelationMatrix();
     TMatrixD correlationMatrix2(corr2.rows(), corr2.cols(), corr2.data());
     auto mean2 = unstableStates.back()->getTemplateRealisation();//use a dummy realisation to get the right edges
+    mean2.SetTitle("Mean2");
     mean2.setBinContents(correlationEstimator.getMean2());
     mean2.setErrorsFrom(var2);
 
