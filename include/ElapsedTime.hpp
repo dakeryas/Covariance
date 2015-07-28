@@ -17,6 +17,8 @@ public:
   
 };
 
+std::ostream& operator<<(std::ostream& output, const ElapsedTime& elapsedTime);
+
 template <class V, class R>
 std::ostream& operator<<(std::ostream& output, const std::chrono::duration<V,R>& duration){
   
@@ -34,8 +36,6 @@ std::ostream& operator<<(std::ostream& output, const std::chrono::duration<V,R>&
   return output;
   
 }
-
-std::ostream& operator<<(std::ostream& output, const ElapsedTime& elapsedTime);
 
 template <class CastDuration>
 CastDuration ElapsedTime::getValue() const{
