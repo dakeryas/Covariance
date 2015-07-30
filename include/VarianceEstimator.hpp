@@ -69,9 +69,11 @@ const Eigen::VectorXd& VarianceEstimator<T>::getMean() const{
 template<class T>
 Eigen::MatrixXd VarianceEstimator<T>::getCorrelationMatrix() const{
   
-  unsigned numberPositive = (var.diagonal().array() > 0).count();
-  Eigen::MatrixXd inverseErrors = var.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
-  return inverseErrors * var.topLeftCorner(numberPositive, numberPositive) * inverseErrors;
+  Eigen::VectorXd diagonal = var.diagonal().matrix();
+  unsigned numberNormal = std::find_if_not(diagonal.data(), diagonal.data() + diagonal.size(), [](auto coefficient){return std::isnormal(coefficient);}) - diagonal.data();//exclude subnormals, inf, nan
+
+  Eigen::MatrixXd inverseErrors = diagonal.head(numberNormal).array().sqrt().inverse().matrix().asDiagonal();
+  return inverseErrors * var.topLeftCorner(numberNormal, numberNormal) * inverseErrors;
   
 }
 

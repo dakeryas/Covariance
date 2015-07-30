@@ -89,10 +89,15 @@ const Eigen::VectorXd& CovarianceEstimator<T>::getMean2() const{
 template <class T>
 Eigen::MatrixXd CovarianceEstimator<T>::getCorrelationMatrix(const Eigen::MatrixXd& var1, const Eigen::MatrixXd& var2) const{
   
-  unsigned numberPositive = std::min((var1.diagonal().array() > 0).count(), (var2.diagonal().array() > 0).count());
-  Eigen::MatrixXd inverseErrors1 = var1.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
-  Eigen::MatrixXd inverseErrors2 = var2.diagonal().head(numberPositive).array().sqrt().inverse().matrix().asDiagonal();
-  return inverseErrors1 * var.topLeftCorner(numberPositive, numberPositive) * inverseErrors2;
+  Eigen::VectorXd diagonal1 = var1.diagonal().matrix();
+  Eigen::VectorXd diagonal2 = var2.diagonal().matrix();
+  unsigned numberNormal1 = std::find_if_not(diagonal1.data(), diagonal1.data() + diagonal1.size(), [](auto coefficient){return std::isnormal(coefficient);}) - diagonal1.data();//exclude subnormals, inf, nan
+  unsigned numberNormal2 = std::find_if_not(diagonal2.data(), diagonal2.data() + diagonal2.size(), [](auto coefficient){return std::isnormal(coefficient);}) - diagonal2.data();//exclude subnormals, inf, nan
+  
+  unsigned numberNormal = std::min(numberNormal1, numberNormal2);
+  Eigen::MatrixXd inverseErrors1 = diagonal1.head(numberNormal).array().sqrt().inverse().matrix().asDiagonal();
+  Eigen::MatrixXd inverseErrors2 = diagonal2.head(numberNormal).array().sqrt().inverse().matrix().asDiagonal();
+  return inverseErrors1 * var.topLeftCorner(numberNormal, numberNormal) * inverseErrors2;
   
 }
 
