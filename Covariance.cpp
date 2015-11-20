@@ -138,7 +138,7 @@ int main (int argc, char* argv[]){
     
     bpo::store(bpo::command_line_parser(argc, argv).options(optionDescription).positional(positionalOptions).run(), arguments);
     
-    if(arguments.count("help")){
+    if(arguments.count("help") || argc == 1){
       
       std::cout<<optionDescription<<std::endl;
       return 0;
