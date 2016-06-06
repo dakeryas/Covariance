@@ -123,7 +123,7 @@ int main (int argc, char* argv[]){
   bpo::options_description optionDescription("Covariance Tool usage");
   optionDescription.add_options()
   ("help,h", "Display this help message")
-  ("tree,t", bpo::value<std::vector<std::string>>(&xmlFiles)->required(), "Decay trees to process in the form of XML files (1 or 2 files)")
+  ("tree", bpo::value<std::vector<std::string>>(&xmlFiles)->required(), "Decay trees to process in the form of XML files (1 or 2 files)")
   ("output,o", bpo::value<std::string>(&output)->required(), "Output file where to save the covariance matrices")
   ("accuracy,a", bpo::value<double>(&epsilon)->default_value(1e-4) ,"Demanded relative accuracy for the covariance matrix")
   ("consecutive,c", bpo::value<unsigned>(&cauchyNumber)->default_value(3),"Number of close consecutive matrices demanded")
