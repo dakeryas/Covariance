@@ -1,4 +1,4 @@
-#include "include/GaussianRatio.hpp"
+#include "GaussianRatio.hpp"
 
 GaussianRatio::GaussianRatio(double mean, double standardDeviation):distribution(mean,standardDeviation){
 

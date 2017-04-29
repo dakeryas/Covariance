@@ -1,4 +1,4 @@
-#include "include/UniformRatio.hpp"
+#include "UniformRatio.hpp"
 
 UniformRatio::UniformRatio(double lowerBound, double upperBound):distribution(lowerBound, upperBound){
 
